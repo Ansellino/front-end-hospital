@@ -44,3 +44,17 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+```bash
+/src
+├── assets/ # Static assets (images, icons)
+├── components/ # Reusable UI components
+├── contexts/ # React contexts for state management
+├── hooks/ # Custom React hooks
+├── interfaces/ # TypeScript interfaces/types
+├── layouts/ # Layout components
+├── pages/ # Page components
+├── services/ # API service functions
+├── utils/ # Utility functions
+└── App.tsx # Root component
+```
