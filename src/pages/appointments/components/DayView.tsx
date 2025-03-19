@@ -103,14 +103,6 @@ const DayView: React.FC<DayViewProps> = ({
         <Typography variant="h6">
           {format(day.date, "EEEE, MMMM d, yyyy")}
         </Typography>
-
-        <Button
-          startIcon={<AddIcon />}
-          variant="contained"
-          onClick={onCreateAppointment}
-        >
-          New Appointment
-        </Button>
       </Box>
 
       <Divider />

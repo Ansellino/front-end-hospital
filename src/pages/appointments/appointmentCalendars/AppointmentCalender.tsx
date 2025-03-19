@@ -20,21 +20,21 @@ import {
   addDays,
 } from "date-fns";
 
-import { useAuth } from "../../contexts/AuthContext";
-import { Appointment } from "../../interfaces/appointment";
-import api from "../../services/api";
+import { useAuth } from "../../../contexts/AuthContext";
+import { Appointment } from "../../../interfaces/appointment";
+import api from "../../../services/api";
 
 // Import components
-import CalendarControls from "./components/CalendarControls";
-import CalendarFilters from "./components/CalendarFilters";
-import MonthView from "./components/MonthView";
-import WeekView from "./components/WeekView";
-import DayView from "./components/DayView";
-import AppointmentDetailDialog from "./components/AppointmentDetailDialog";
+import CalendarControls from "../components/CalendarControls";
+import CalendarFilters from "../components/CalendarFilters";
+import MonthView from "../components/MonthView";
+import WeekView from "../components/WeekView";
+import DayView from "../components/DayView";
+import AppointmentDetailDialog from "../components/AppointmentDetailDialog";
 
 // Import types and constants
-import { ViewMode, DayWithAppointments } from "./types";
-import { statusColors, typeColors } from "./constants";
+import { ViewMode, DayWithAppointments } from "../types";
+import { statusColors, typeColors } from "../constants";
 
 const AppointmentCalender: React.FC = () => {
   const navigate = useNavigate();

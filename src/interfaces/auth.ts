@@ -1,10 +1,17 @@
-
-// interfaces/auth.ts
 export interface User {
   id: string;
   email: string;
-  role: "doctor" | "nurse" | "admin" | "receptionist";
+  firstName: string;
+  lastName: string;
+  role: "admin" | "doctor" | "nurse" | "receptionist";
   permissions: string[];
   staffId?: string;
+  phone: string;
 }
 
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  error: string | null;
+  loading: boolean;
+}
