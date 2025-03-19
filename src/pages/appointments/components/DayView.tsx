@@ -115,43 +115,34 @@ const DayView: React.FC<DayViewProps> = ({
   return (
     <Paper
       elevation={2}
-      className="flex flex-col h-full rounded-lg overflow-hidden shadow-md"
+      className="flex flex-col h-full overflow-hidden rounded-lg shadow-md"
     >
       {/* Header */}
-      <Box className="p-4 flex justify-between items-center bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
+      <Box className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
         <Typography
           variant="h6"
           className="font-semibold text-gray-800 dark:text-gray-100"
         >
           {format(day.date, "EEEE, MMMM d, yyyy")}
         </Typography>
-        <Button
-          variant="contained"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
-          startIcon={<AddIcon />}
-          onClick={() => onCreateAppointment()}
-          size="small"
-        >
-          New Appointment
-        </Button>
       </Box>
 
       <Divider />
 
       {/* Scrollable Container */}
       <Box
-        className="flex overflow-y-auto relative"
+        className="relative flex overflow-y-auto"
         sx={{ height: "calc(100vh - 200px)" }}
       >
         {/* Time Column */}
         <Box
-          className="w-24 flex-shrink-0 relative border-r border-gray-200 dark:border-gray-700"
+          className="relative flex-shrink-0 w-24 border-r border-gray-200 dark:border-gray-700"
           sx={{ height: totalHeight }}
         >
           {timeLabels.map((label, index) => (
             <Box
               key={index}
-              className="absolute w-full flex items-center justify-center border-b border-gray-200 dark:border-gray-700"
+              className="absolute flex items-center justify-center w-full border-b border-gray-200 dark:border-gray-700"
               sx={{
                 top: label.topPosition,
                 height: PX_PER_HOUR,
@@ -159,7 +150,7 @@ const DayView: React.FC<DayViewProps> = ({
             >
               <Typography
                 variant="body2"
-                className="text-gray-600 dark:text-gray-400 font-medium"
+                className="font-medium text-gray-600 dark:text-gray-400"
               >
                 {format(label.time, "h:mm a")}
               </Typography>
@@ -169,14 +160,14 @@ const DayView: React.FC<DayViewProps> = ({
 
         {/* Appointments Column */}
         <Box
-          className="flex-1 relative bg-gray-50 dark:bg-gray-800"
+          className="relative flex-1 bg-gray-50 dark:bg-gray-800"
           sx={{ height: totalHeight }}
         >
           {/* Clickable Time Slots */}
           {timeSlots.map((slot, index) => (
             <Box
               key={index}
-              className="absolute left-0 right-0 border-b border-gray-200 dark:border-gray-700 cursor-pointer transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+              className="absolute left-0 right-0 transition-colors border-b border-gray-200 cursor-pointer dark:border-gray-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
               sx={{
                 top: slot.topPosition,
                 height: slot.height,
@@ -191,7 +182,7 @@ const DayView: React.FC<DayViewProps> = ({
           {timeLabels.map((label, index) => (
             <Box
               key={index}
-              className="absolute left-0 right-0 border-b border-gray-200 dark:border-gray-700 pointer-events-none"
+              className="absolute left-0 right-0 border-b border-gray-200 pointer-events-none dark:border-gray-700"
               sx={{
                 top: label.topPosition,
                 height: PX_PER_HOUR,
@@ -248,7 +239,7 @@ const DayView: React.FC<DayViewProps> = ({
                   <Box className="flex flex-col h-full">
                     <Typography
                       variant="subtitle2"
-                      className="font-bold text-white mb-1"
+                      className="mb-1 font-bold text-white"
                       sx={{
                         fontSize: durationMinutes < 30 ? "0.75rem" : undefined,
                         lineHeight: 1.2,
@@ -258,7 +249,7 @@ const DayView: React.FC<DayViewProps> = ({
                     </Typography>
 
                     {durationMinutes >= 20 && (
-                      <Box className="flex justify-between items-center">
+                      <Box className="flex items-center justify-between">
                         <Typography
                           variant="caption"
                           className="font-medium"
@@ -285,7 +276,7 @@ const DayView: React.FC<DayViewProps> = ({
                     )}
 
                     {durationMinutes >= 45 && (
-                      <Box className="mt-auto flex justify-between items-center pt-2">
+                      <Box className="flex items-center justify-between pt-2 mt-auto">
                         <Chip
                           size="small"
                           label={appointment.status}
@@ -323,10 +314,10 @@ const DayView: React.FC<DayViewProps> = ({
 
       {/* Empty State */}
       {day.appointments.length === 0 && (
-        <Box className="flex justify-center items-center h-48 w-full">
+        <Box className="flex items-center justify-center w-full h-48">
           <Typography
             variant="body1"
-            className="text-gray-500 dark:text-gray-400 text-center px-4 py-8 bg-gray-50 dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-700"
+            className="px-4 py-8 text-center text-gray-500 border border-gray-300 border-dashed rounded-lg dark:text-gray-400 bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
           >
             No appointments scheduled for this day.
             <br />

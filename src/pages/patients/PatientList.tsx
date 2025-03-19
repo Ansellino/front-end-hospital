@@ -24,6 +24,12 @@ import {
   DialogTitle,
   TablePagination,
   CircularProgress,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -55,6 +61,13 @@ const PatientList: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [patientToDelete, setPatientToDelete] = useState<string | null>(null);
 
+  // Filter states
+  const [showFilters, setShowFilters] = useState(false);
+  const [genderFilter, setGenderFilter] = useState("all");
+  const [insuranceFilter, setInsuranceFilter] = useState("all");
+  const [ageRangeFilter, setAgeRangeFilter] = useState("all");
+  const [insuranceProviders, setInsuranceProviders] = useState<string[]>([]);
+
   // Fetch patients data
   useEffect(() => {
     const fetchPatients = async () => {
@@ -63,6 +76,13 @@ const PatientList: React.FC = () => {
         const data = await patientService.getPatients();
         setPatients(data);
         setFilteredPatients(data);
+
+        // Extract unique insurance providers for filtering
+        const uniqueProviders = Array.from(
+          new Set(data.map((p: Patient) => p.insuranceInfo.provider))
+        ) as string[]; // Add explicit type assertion here
+        setInsuranceProviders(uniqueProviders);
+
         setError(null);
       } catch (err) {
         console.error("Error fetching patients:", err);
@@ -77,22 +97,69 @@ const PatientList: React.FC = () => {
 
   // Handle search and filtering
   useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setFilteredPatients(patients);
-      return;
+    let filtered = [...patients];
+
+    // Apply search query
+    if (searchQuery.trim() !== "") {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (patient) =>
+          patient.firstName.toLowerCase().includes(query) ||
+          patient.lastName.toLowerCase().includes(query) ||
+          patient.email.toLowerCase().includes(query) ||
+          patient.contactNumber.includes(query)
+      );
     }
 
-    const query = searchQuery.toLowerCase();
-    const filtered = patients.filter(
-      (patient) =>
-        patient.firstName.toLowerCase().includes(query) ||
-        patient.lastName.toLowerCase().includes(query) ||
-        patient.email.toLowerCase().includes(query) ||
-        patient.contactNumber.includes(query)
-    );
+    // Apply gender filter
+    if (genderFilter !== "all") {
+      filtered = filtered.filter((patient) => patient.gender === genderFilter);
+    }
+
+    // Apply insurance provider filter
+    if (insuranceFilter !== "all") {
+      filtered = filtered.filter(
+        (patient) => patient.insuranceInfo.provider === insuranceFilter
+      );
+    }
+
+    // Apply age range filter
+    if (ageRangeFilter !== "all") {
+      filtered = filtered.filter((patient) => {
+        const age = calculateAge(patient.dateOfBirth);
+        switch (ageRangeFilter) {
+          case "0-18":
+            return age >= 0 && age <= 18;
+          case "19-35":
+            return age >= 19 && age <= 35;
+          case "36-50":
+            return age >= 36 && age <= 50;
+          case "51-65":
+            return age >= 51 && age <= 65;
+          case "65+":
+            return age >= 65;
+          default:
+            return true;
+        }
+      });
+    }
 
     setFilteredPatients(filtered);
-  }, [searchQuery, patients]);
+    setPage(0); // Reset to first page when filters change
+  }, [searchQuery, patients, genderFilter, insuranceFilter, ageRangeFilter]);
+
+  // Handle filter changes
+  const handleGenderFilterChange = (event: SelectChangeEvent) => {
+    setGenderFilter(event.target.value);
+  };
+
+  const handleInsuranceFilterChange = (event: SelectChangeEvent) => {
+    setInsuranceFilter(event.target.value);
+  };
+
+  const handleAgeRangeFilterChange = (event: SelectChangeEvent) => {
+    setAgeRangeFilter(event.target.value);
+  };
 
   // Handlers
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,9 +196,9 @@ const PatientList: React.FC = () => {
 
     try {
       await patientService.deletePatient(patientToDelete);
-      setPatients(patients.filter((p) => p.id !== patientToDelete));
+      setPatients(patients.filter((p: Patient) => p.id !== patientToDelete));
       setFilteredPatients(
-        filteredPatients.filter((p) => p.id !== patientToDelete)
+        filteredPatients.filter((p: Patient) => p.id !== patientToDelete)
       );
     } catch (err) {
       console.error("Error deleting patient:", err);
@@ -232,11 +299,77 @@ const PatientList: React.FC = () => {
 
           <Button
             startIcon={<FilterIcon />}
+            onClick={() => setShowFilters(!showFilters)}
             sx={{ display: { xs: "none", md: "flex" } }}
           >
             Filters
           </Button>
         </Box>
+
+        {/* Filter options */}
+        {showFilters && (
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            <Grid item xs={12} sm={4}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="gender-filter-label">Gender</InputLabel>
+                <Select
+                  labelId="gender-filter-label"
+                  id="gender-filter"
+                  value={genderFilter}
+                  label="Gender"
+                  onChange={handleGenderFilterChange}
+                >
+                  <MenuItem value="all">All Genders</MenuItem>
+                  <MenuItem value="male">Male</MenuItem>
+                  <MenuItem value="female">Female</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="insurance-filter-label">
+                  Insurance Provider
+                </InputLabel>
+                <Select
+                  labelId="insurance-filter-label"
+                  id="insurance-filter"
+                  value={insuranceFilter}
+                  label="Insurance Provider"
+                  onChange={handleInsuranceFilterChange}
+                >
+                  <MenuItem value="all">All Providers</MenuItem>
+                  {insuranceProviders.map((provider) => (
+                    <MenuItem key={provider} value={provider}>
+                      {provider}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="age-filter-label">Age Range</InputLabel>
+                <Select
+                  labelId="age-filter-label"
+                  id="age-filter"
+                  value={ageRangeFilter}
+                  label="Age Range"
+                  onChange={handleAgeRangeFilterChange}
+                >
+                  <MenuItem value="all">All Ages</MenuItem>
+                  <MenuItem value="0-18">0-18 years</MenuItem>
+                  <MenuItem value="19-35">19-35 years</MenuItem>
+                  <MenuItem value="36-50">36-50 years</MenuItem>
+                  <MenuItem value="51-65">51-65 years</MenuItem>
+                  <MenuItem value="65+">65+ years</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        )}
 
         <TableContainer>
           <Table>

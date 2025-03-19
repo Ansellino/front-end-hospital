@@ -29,11 +29,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       }`}
     >
       {/* Header with logo and toggle button */}
-      <div className="border-b border-gray-200 flex items-center h-16">
+      <div className="flex items-center h-16 border-b border-gray-200">
         {!collapsed && (
-          <div className="flex items-center px-5 h-full">
-            <HospitalIcon className="text-primary-500 mr-2" />
-            <h2 className="text-xl font-semibold text-primary-600 truncate">
+          <div className="flex items-center h-full px-5">
+            <HospitalIcon className="mr-2 text-primary-500" />
+            <h2 className="text-xl font-semibold truncate text-primary-600">
               HealthcareMS
             </h2>
           </div>
@@ -50,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       </div>
 
       {/* Navigation menu */}
-      <nav className="flex-grow py-5 px-2 overflow-y-auto">
+      <nav className="flex-grow px-2 py-5 overflow-y-auto">
         <ul className="space-y-1">
           <li>
             <NavLink
@@ -149,25 +149,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           </li>
         </ul>
       </nav>
-
-      {/* User profile section */}
-      {!collapsed && (
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center">
-            <div className="w-9 h-9 rounded-full bg-primary-500 flex items-center justify-center text-white font-medium">
-              {currentUser?.email?.[0].toUpperCase() || "U"}
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-gray-700 truncate max-w-[180px]">
-                {currentUser?.email || "User"}
-              </p>
-              <p className="text-xs text-gray-500">
-                {currentUser?.role || "User"}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </aside>
   );
 };
