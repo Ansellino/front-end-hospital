@@ -1,9 +1,7 @@
 import React from "react";
 import {
-  Box,
   IconButton,
   Button,
-  Typography,
   ToggleButtonGroup,
   ToggleButton,
 } from "@mui/material";
@@ -78,17 +76,13 @@ const CalendarControls: React.FC<CalendarControlsProps> = ({
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: { xs: "column", md: "row" },
-        justifyContent: "space-between",
-        alignItems: { xs: "stretch", md: "center" },
-        gap: 2,
-      }}
-    >
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <IconButton onClick={navigatePrevious} aria-label="previous period">
+    <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-6">
+      <div className="flex items-center">
+        <IconButton
+          onClick={navigatePrevious}
+          aria-label="previous period"
+          className="text-gray-600"
+        >
           <ArrowBackIcon />
         </IconButton>
 
@@ -96,37 +90,66 @@ const CalendarControls: React.FC<CalendarControlsProps> = ({
           onClick={navigateToday}
           variant="outlined"
           startIcon={<CalendarTodayIcon />}
-          sx={{ mx: 1 }}
+          className="mx-2"
+          size="small"
         >
           Today
         </Button>
 
-        <IconButton onClick={navigateNext} aria-label="next period">
+        <IconButton
+          onClick={navigateNext}
+          aria-label="next period"
+          className="text-gray-600"
+        >
           <ArrowForwardIcon />
         </IconButton>
 
-        <Typography variant="h6" sx={{ ml: 2 }}>
+        <h2 className="ml-4 text-lg font-medium hidden sm:block">
           {getDateDisplayText()}
-        </Typography>
-      </Box>
+        </h2>
+      </div>
 
-      <ToggleButtonGroup
-        value={viewMode}
-        exclusive
-        onChange={(_, newValue) => newValue && onViewModeChange(newValue)}
-        aria-label="calendar view mode"
-      >
-        <ToggleButton value={ViewMode.Day} aria-label="day view">
-          <ViewDayIcon sx={{ mr: 1 }} /> Day
-        </ToggleButton>
-        <ToggleButton value={ViewMode.Week} aria-label="week view">
-          <ViewWeekIcon sx={{ mr: 1 }} /> Week
-        </ToggleButton>
-        <ToggleButton value={ViewMode.Month} aria-label="month view">
-          <ViewMonthIcon sx={{ mr: 1 }} /> Month
-        </ToggleButton>
-      </ToggleButtonGroup>
-    </Box>
+      {/* Display date for mobile */}
+      <div className="text-center sm:hidden mb-2">
+        <h2 className="text-lg font-medium">{getDateDisplayText()}</h2>
+      </div>
+
+      <div className="flex justify-center md:justify-end">
+        <ToggleButtonGroup
+          value={viewMode}
+          exclusive
+          onChange={(_, newValue) => newValue && onViewModeChange(newValue)}
+          aria-label="calendar view mode"
+          size="small"
+          className="self-center"
+        >
+          <ToggleButton
+            value={ViewMode.Day}
+            aria-label="day view"
+            className="px-3 py-1"
+          >
+            <ViewDayIcon className="mr-1" fontSize="small" />
+            <span className="hidden sm:inline">Day</span>
+          </ToggleButton>
+          <ToggleButton
+            value={ViewMode.Week}
+            aria-label="week view"
+            className="px-3 py-1"
+          >
+            <ViewWeekIcon className="mr-1" fontSize="small" />
+            <span className="hidden sm:inline">Week</span>
+          </ToggleButton>
+          <ToggleButton
+            value={ViewMode.Month}
+            aria-label="month view"
+            className="px-3 py-1"
+          >
+            <ViewMonthIcon className="mr-1" fontSize="small" />
+            <span className="hidden sm:inline">Month</span>
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </div>
+    </div>
   );
 };
 
