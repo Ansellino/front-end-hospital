@@ -1,12 +1,12 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Paper,
   Typography,
   Box,
   Grid,
-  Chip,
   Tooltip,
-  Divider,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { format, parseISO, isToday } from "date-fns";
 import { DayWithAppointments } from "../types";
@@ -21,8 +21,18 @@ interface WeekViewProps {
 // Start and end hours for the week view (8AM to 7PM)
 const START_HOUR = 8;
 const END_HOUR = 19;
+const MIN_APPOINTMENT_HEIGHT = 20; // Minimum height for very short appointments
 
 const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+  // Track which appointment is being hovered
+  const [hoveredAppointmentId, setHoveredAppointmentId] = useState<
+    string | null
+  >(null);
+
   // Create time slots for the day (hourly intervals)
   const timeSlots = useMemo(() => {
     const slots = [];
@@ -38,37 +48,75 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
   // Calculate appointment position and height based on time
   const getAppointmentStyle = (appointment: Appointment) => {
     const startTime = parseISO(appointment.startTime);
-    const endTime = parseISO(appointment.endTime);
 
     // Calculate start position
     const startHour = startTime.getHours();
     const startMinute = startTime.getMinutes();
     const startPosition = (startHour - START_HOUR) * 60 + startMinute;
 
-    // Calculate height based on duration
-    const durationMinutes =
-      (endTime.getTime() - startTime.getTime()) / (1000 * 60);
+    // Responsive sizing: increase mobile size
+    const hourHeight = isMobile ? 50 : isTablet ? 50 : 60; // px per hour
+    const minuteHeight = hourHeight / 60; // px per minute
+    const top = startPosition * minuteHeight;
 
-    // Each hour is 60px in height
-    const top = (startPosition / 60) * 60;
-    const height = Math.max((durationMinutes / 60) * 60, 20);
+    // Use fixed height instead of calculating based on duration
+    const FIXED_HEIGHT = isMobile ? 40 : 50; // Fixed height in pixels
 
     return {
       top: `${top}px`,
-      height: `${height}px`,
+      height: `${FIXED_HEIGHT}px`, // Fixed height for all appointments
       backgroundColor: statusColors[appointment.status] || "#ccc",
     };
   };
 
+  // Legend for appointment status colors
+  const renderColorLegend = () => {
+    const legend = [
+      { status: "scheduled", color: "#3f51b5", label: "Scheduled" },
+      { status: "completed", color: "#4caf50", label: "Completed" },
+      { status: "canceled", color: "#f44336", label: "Canceled" },
+      { status: "no-show", color: "#ff9800", label: "No Show" },
+    ];
+
+    return (
+      <Box className="px-2 py-1.5 mb-2 flex flex-wrap gap-2 justify-center items-center">
+        <Typography
+          variant="caption"
+          className="text-gray-600 mr-1 font-medium"
+        >
+          Status :
+        </Typography>
+        {legend.map((item) => (
+          <Box key={item.status} className="flex items-center">
+            <Box
+              className="w-3 h-3 rounded-sm mr-1"
+              sx={{ backgroundColor: item.color }}
+            />
+            <Typography
+              variant="caption"
+              className="text-gray-700"
+              sx={{ fontSize: isMobile ? "0.65rem" : "0.75rem" }}
+            >
+              {item.label}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    );
+  };
+
   return (
-    <Paper elevation={1}>
+    <Paper elevation={1} className="overflow-hidden">
+      {/* Color Legend */}
+      {renderColorLegend()}
+
       {/* Header row with days of week */}
       <Grid container>
         {/* Empty cell for time column */}
         <Grid
           item
           sx={{
-            width: "60px",
+            width: isMobile ? "40px" : "60px",
             borderRight: 1,
             borderBottom: 1,
             borderColor: "divider",
@@ -82,8 +130,8 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
             xs
             key={day.date.toString()}
             sx={{
-              py: 1,
-              px: 1,
+              py: isMobile ? 0.5 : 1,
+              px: isMobile ? 0.5 : 1,
               textAlign: "center",
               borderBottom: 1,
               borderRight: 1,
@@ -97,24 +145,33 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
             }}
           >
             <Typography
-              variant="subtitle2"
+              variant={isMobile ? "caption" : "subtitle2"}
               fontWeight={isToday(day.date) ? "bold" : "normal"}
             >
-              {format(day.date, "EEE")}
+              {format(day.date, isMobile ? "dd" : "EEE")}
             </Typography>
-            <Typography variant="caption">
-              {format(day.date, "MMM d")}
-            </Typography>
+            {!isMobile && (
+              <Typography variant="caption">
+                {format(day.date, "MMM d")}
+              </Typography>
+            )}
           </Grid>
         ))}
       </Grid>
 
       {/* Time grid */}
-      <Box sx={{ display: "flex", minHeight: "600px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          minHeight: isMobile ? "450px" : isTablet ? "500px" : "600px",
+          maxHeight: isMobile ? "70vh" : "calc(100vh - 250px)",
+          overflow: "auto",
+        }}
+      >
         {/* Time column */}
         <Box
           sx={{
-            width: "60px",
+            width: isMobile ? "40px" : "60px",
             borderRight: 1,
             borderColor: "divider",
             flexShrink: 0,
@@ -124,7 +181,7 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
             <Box
               key={slot.hour}
               sx={{
-                height: "60px",
+                height: isMobile ? "45px" : isTablet ? "50px" : "60px",
                 borderBottom: 1,
                 borderColor: "divider",
                 display: "flex",
@@ -133,8 +190,14 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
                 pt: 0.5,
               }}
             >
-              <Typography variant="caption" color="text.secondary">
-                {slot.formattedTime}
+              <Typography
+                variant={isMobile ? "caption" : "body2"}
+                color="text.secondary"
+                sx={{ fontSize: isMobile ? "0.65rem" : undefined }}
+              >
+                {isMobile
+                  ? format(new Date().setHours(slot.hour, 0, 0, 0), "ha")
+                  : slot.formattedTime}
               </Typography>
             </Box>
           ))}
@@ -162,7 +225,7 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
                 <Box
                   key={index}
                   sx={{
-                    height: "60px",
+                    height: isMobile ? "45px" : isTablet ? "50px" : "60px",
                     borderBottom: 1,
                     borderColor: "divider",
                     backgroundColor:
@@ -172,50 +235,122 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
                 />
               ))}
 
-              {/* Appointments */}
-              {day.appointments.map((appointment) => (
-                <Tooltip
-                  key={appointment.id}
-                  title={`${appointment.title} (${format(
-                    parseISO(appointment.startTime),
-                    "h:mm a"
-                  )} - ${format(parseISO(appointment.endTime), "h:mm a")})`}
-                  placement="top"
-                >
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      left: "2px",
-                      right: "2px",
-                      ...getAppointmentStyle(appointment),
-                      borderRadius: 1,
-                      p: 0.5,
-                      color: "white",
-                      cursor: "pointer",
-                      overflow: "hidden",
-                      boxShadow: 1,
-                      fontSize: "0.75rem",
-                      "&:hover": {
-                        opacity: 0.9,
-                        boxShadow: 2,
-                      },
-                    }}
-                    onClick={() => onAppointmentClick(appointment)}
+              {/* Color-coded Appointments (with text) */}
+              {day.appointments.map((appointment) => {
+                const isHovered = hoveredAppointmentId === appointment.id;
+                const appointmentStartTime = parseISO(appointment.startTime);
+                const appointmentEndTime = parseISO(appointment.endTime);
+                // Calculate duration to determine how much information to show
+                const durationMinutes =
+                  (appointmentEndTime.getTime() -
+                    appointmentStartTime.getTime()) /
+                  (1000 * 60);
+
+                return (
+                  <Tooltip
+                    key={appointment.id}
+                    title={`${appointment.title} (${format(
+                      appointmentStartTime,
+                      "h:mm a"
+                    )} - ${format(appointmentEndTime, "h:mm a")}) - ${
+                      appointment.status
+                    }`}
+                    placement="top"
+                    arrow
+                    followCursor
                   >
-                    <Typography variant="caption" noWrap>
-                      {format(parseISO(appointment.startTime), "h:mm a")}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      noWrap
-                      fontWeight="bold"
-                      sx={{ fontSize: "0.75rem" }}
+                    <Box
+                      className={`
+                        absolute rounded-md cursor-pointer 
+                        transition-all duration-200
+                        ${isHovered ? "shadow-lg z-50" : "shadow-sm z-10"}
+                        active:opacity-90 touch-action-manipulation
+                        overflow-hidden
+                      `}
+                      sx={{
+                        left: "2px",
+                        right: "2px",
+                        ...getAppointmentStyle(appointment),
+                        transform: isHovered ? "scale(1.02)" : "none",
+                        boxShadow: isHovered
+                          ? "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)"
+                          : "0 2px 4px rgba(0,0,0,0.1)",
+                        transition:
+                          "transform 0.2s ease, box-shadow 0.2s ease, z-index 0s",
+                        "&:hover": { opacity: 0.95 },
+                        "&:before": {
+                          content: '""',
+                          position: "absolute",
+                          top: "-10px",
+                          left: "-10px",
+                          right: "-10px",
+                          bottom: "-10px",
+                          zIndex: -1,
+                        },
+                      }}
+                      onClick={() => onAppointmentClick(appointment)}
+                      onMouseEnter={() =>
+                        setHoveredAppointmentId(appointment.id)
+                      }
+                      onMouseLeave={() => setHoveredAppointmentId(null)}
+                      onFocus={() => setHoveredAppointmentId(appointment.id)}
+                      onBlur={() => setHoveredAppointmentId(null)}
                     >
-                      {appointment.title}
-                    </Typography>
-                  </Box>
-                </Tooltip>
-              ))}
+                      {/* Display content based on fixed height */}
+                      <Box className="p-1 h-full flex flex-col justify-between">
+                        {/* Title */}
+                        <Box className="flex items-center gap-1">
+                          <Typography
+                            variant="caption"
+                            className="font-medium text-white truncate"
+                            sx={{
+                              fontSize: isMobile ? "0.75rem" : "0.75rem",
+                              lineHeight: 1.2,
+                              fontWeight: 600,
+                              textShadow: "0px 1px 2px rgba(0,0,0,0.2)",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {appointment.title}
+                          </Typography>
+                        </Box>
+
+                        {/* Time always visible now that height is fixed */}
+                        <Typography
+                          variant="caption"
+                          className="text-white"
+                          sx={{
+                            fontSize: isMobile ? "0.65rem" : "0.65rem",
+                            lineHeight: 1,
+                            opacity: 0.9,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {format(appointmentStartTime, "h:mm a")}
+                        </Typography>
+                      </Box>
+
+                      {/* Show dot for very short appointments only when hovered */}
+                      {durationMinutes <= (isMobile ? 15 : 20) && isHovered && (
+                        <Box
+                          className="absolute inset-0 flex items-center justify-center"
+                          sx={{
+                            backgroundColor: "rgba(255,255,255,0.2)",
+                            borderRadius: "inherit",
+                          }}
+                        >
+                          <Box
+                            className="w-1.5 h-1.5 rounded-full"
+                            sx={{ backgroundColor: "white" }}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                  </Tooltip>
+                );
+              })}
 
               {/* No appointments indicator */}
               {day.appointments.length === 0 && (
@@ -229,7 +364,7 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
                   }}
                 >
                   <Typography variant="caption" color="text.secondary">
-                    No appointments
+                    {isMobile ? "No appts" : "No appointments"}
                   </Typography>
                 </Box>
               )}

@@ -24,7 +24,7 @@ const START_HOUR = 8;
 const END_HOUR = 19;
 const PX_PER_HOUR = 120; // 60px per 30 minutes
 const TIME_SLOT_INTERVAL = 30; // 30 minutes interval for time slots
-const APPOINTMENT_HEIGHT = 90; // Fixed height for all appointments
+const MIN_APPOINTMENT_HEIGHT = 40; // Minimum height for very short appointments
 
 const DayView: React.FC<DayViewProps> = ({
   day,
@@ -77,18 +77,28 @@ const DayView: React.FC<DayViewProps> = ({
     return slots;
   }, [day.date, totalHours]);
 
-  // Calculate appointment position with fixed height
+  // Calculate appointment position based on actual duration
   const getAppointmentStyle = (appointment: Appointment) => {
     const startTime = parseISO(appointment.startTime);
+    const endTime = parseISO(appointment.endTime);
 
+    // Calculate duration in minutes
+    const durationMinutes = Math.round(
+      (endTime.getTime() - startTime.getTime()) / (1000 * 60)
+    );
+
+    // Calculate position based on start time
     const startMinutes = startTime.getHours() * 60 + startTime.getMinutes();
     const slotStartMinutes = START_HOUR * 60;
     const topPosition = (startMinutes - slotStartMinutes) * 2; // 2px per minute
 
-    // Apply a fixed height regardless of duration
+    // Calculate height based on duration (2px per minute)
+    // Ensure a minimum height for very short appointments
+    const height = Math.max(durationMinutes * 2, MIN_APPOINTMENT_HEIGHT);
+
     return {
       top: `${topPosition}px`,
-      height: `${APPOINTMENT_HEIGHT}px`,
+      height: `${height}px`,
       backgroundColor: statusColors[appointment.status] || "#ccc",
       position: "relative",
     };
@@ -208,7 +218,7 @@ const DayView: React.FC<DayViewProps> = ({
             return (
               <Box
                 key={appointment.id}
-                className={`absolute left-2 right-2 rounded-md p-3 text-white cursor-pointer transition-all duration-200 ${
+                className={`absolute left-2 right-2 rounded-md p-2 text-white cursor-pointer overflow-visible transition-all duration-200 ${
                   isHovered
                     ? "shadow-lg transform scale-[1.02] z-50"
                     : "shadow-sm z-10"
@@ -239,48 +249,70 @@ const DayView: React.FC<DayViewProps> = ({
                     <Typography
                       variant="subtitle2"
                       className="font-bold text-white mb-1"
+                      sx={{
+                        fontSize: durationMinutes < 30 ? "0.75rem" : undefined,
+                        lineHeight: 1.2,
+                      }}
                     >
                       {appointment.title}
                     </Typography>
 
-                    <Box className="flex justify-between items-center">
-                      <Typography variant="caption" className="font-medium">
-                        {format(appointmentStartTime, "h:mm a")} -{" "}
-                        {format(appointmentEndTime, "h:mm a")}
-                      </Typography>
+                    {durationMinutes >= 20 && (
+                      <Box className="flex justify-between items-center">
+                        <Typography
+                          variant="caption"
+                          className="font-medium"
+                          sx={{
+                            fontSize:
+                              durationMinutes < 45 ? "0.65rem" : "0.75rem",
+                          }}
+                        >
+                          {format(appointmentStartTime, "h:mm a")} -{" "}
+                          {format(appointmentEndTime, "h:mm a")}
+                        </Typography>
 
-                      <Typography variant="caption" className="font-medium">
-                        {durationMinutes} min
-                      </Typography>
-                    </Box>
+                        <Typography
+                          variant="caption"
+                          className="font-medium"
+                          sx={{
+                            fontSize:
+                              durationMinutes < 45 ? "0.65rem" : "0.75rem",
+                          }}
+                        >
+                          {durationMinutes} min
+                        </Typography>
+                      </Box>
+                    )}
 
-                    <Box className="mt-auto flex justify-between items-center pt-2">
-                      <Chip
-                        size="small"
-                        label={appointment.status}
-                        className="text-xs"
-                        sx={{
-                          backgroundColor: "rgba(255,255,255,0.25)",
-                          color: "inherit",
-                          fontWeight: 500,
-                          height: "20px",
-                          ".MuiChip-label": { px: 1 },
-                        }}
-                      />
+                    {durationMinutes >= 45 && (
+                      <Box className="mt-auto flex justify-between items-center pt-2">
+                        <Chip
+                          size="small"
+                          label={appointment.status}
+                          className="text-xs"
+                          sx={{
+                            backgroundColor: "rgba(255,255,255,0.25)",
+                            color: "inherit",
+                            fontWeight: 500,
+                            height: "20px",
+                            ".MuiChip-label": { px: 1 },
+                          }}
+                        />
 
-                      <Chip
-                        size="small"
-                        label={appointment.type}
-                        className="text-xs"
-                        sx={{
-                          backgroundColor: "rgba(255,255,255,0.15)",
-                          color: "inherit",
-                          fontWeight: 500,
-                          height: "20px",
-                          ".MuiChip-label": { px: 1 },
-                        }}
-                      />
-                    </Box>
+                        <Chip
+                          size="small"
+                          label={appointment.type}
+                          className="text-xs"
+                          sx={{
+                            backgroundColor: "rgba(255,255,255,0.15)",
+                            color: "inherit",
+                            fontWeight: 500,
+                            height: "20px",
+                            ".MuiChip-label": { px: 1 },
+                          }}
+                        />
+                      </Box>
+                    )}
                   </Box>
                 </Tooltip>
               </Box>

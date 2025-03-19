@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -36,7 +36,7 @@ import AppointmentDetailDialog from "../components/AppointmentDetailDialog";
 import { ViewMode, DayWithAppointments } from "../types";
 import { statusColors, typeColors } from "../constants";
 
-const AppointmentCalender: React.FC = () => {
+const AppointmentCalendar: React.FC = () => {
   const navigate = useNavigate();
   const { hasPermission } = useAuth();
 
@@ -69,87 +69,7 @@ const AppointmentCalender: React.FC = () => {
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
 
-  // Fetch appointments when date or view mode changes
-  useEffect(() => {
-    fetchAppointments();
-    fetchDoctors();
-  }, [currentDate, viewMode]);
-
-  // Filter appointments when filter criteria change
-  useEffect(() => {
-    applyFilters();
-  }, [appointments, filterDoctor, filterStatus, filterType, searchQuery]);
-
-  // Prepare calendar days when filtered appointments or date changes
-  useEffect(() => {
-    prepareCalendarDays();
-  }, [filteredAppointments, currentDate, viewMode]);
-
-  // Fetch appointments from API
-  const fetchAppointments = async () => {
-    try {
-      setLoading(true);
-
-      // Get date range based on view mode
-      let startDate, endDate;
-
-      if (viewMode === ViewMode.Day) {
-        startDate = format(currentDate, "yyyy-MM-dd");
-        endDate = format(currentDate, "yyyy-MM-dd");
-      } else if (viewMode === ViewMode.Week) {
-        startDate = format(
-          startOfWeek(currentDate, { weekStartsOn: 0 }),
-          "yyyy-MM-dd"
-        );
-        endDate = format(
-          endOfWeek(currentDate, { weekStartsOn: 0 }),
-          "yyyy-MM-dd"
-        );
-      } else {
-        // Month view (we'll get a bit more data to show the full calendar grid)
-        const firstDay = new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          1
-        );
-        const lastDay = new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth() + 1,
-          0
-        );
-
-        // Get the first day of the week that contains the first day of the month
-        startDate = format(
-          startOfWeek(firstDay, { weekStartsOn: 0 }),
-          "yyyy-MM-dd"
-        );
-        // Get the last day of the week that contains the last day of the month
-        endDate = format(endOfWeek(lastDay, { weekStartsOn: 0 }), "yyyy-MM-dd");
-      }
-
-      try {
-        const response = await api.get("/appointments", {
-          params: { startDate, endDate },
-        });
-
-        setAppointments(response.data);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching appointments:", err);
-        setError("Failed to load appointments. Please try again.");
-        // For demo purposes, let's generate some mock data
-        setAppointments(generateMockAppointments());
-      } finally {
-        setLoading(false);
-      }
-    } catch (err) {
-      console.error("Error in appointment fetching process:", err);
-      setError("An unexpected error occurred. Please try again.");
-      setLoading(false);
-    }
-  };
-
-  const fetchDoctors = async () => {
+  const fetchDoctors = useCallback(async () => {
     try {
       // Fetch list of doctors for filtering
       const response = await api.get("/staff", {
@@ -171,10 +91,20 @@ const AppointmentCalender: React.FC = () => {
         { id: "d-003", name: "Dr. Emily Rodriguez" },
       ]);
     }
-  };
+  }, []);
+
+  // Filter appointments when filter criteria change
+  useEffect(() => {
+    applyFilters();
+  }, [appointments, filterDoctor, filterStatus, filterType, searchQuery]);
+
+  // Prepare calendar days when filtered appointments or date changes
+  useEffect(() => {
+    prepareCalendarDays();
+  }, [filteredAppointments, currentDate, viewMode]);
 
   // Apply filters to appointments
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...appointments];
 
     // Apply doctor filter
@@ -209,10 +139,10 @@ const AppointmentCalender: React.FC = () => {
     }
 
     setFilteredAppointments(filtered);
-  };
+  }, [appointments, filterDoctor, filterStatus, filterType, searchQuery]);
 
   // Prepare calendar days based on current date and view mode
-  const prepareCalendarDays = () => {
+  const prepareCalendarDays = useCallback(() => {
     const days: DayWithAppointments[] = [];
 
     if (viewMode === ViewMode.Day) {
@@ -259,7 +189,7 @@ const AppointmentCalender: React.FC = () => {
     }
 
     setCalendarDays(days);
-  };
+  }, [filteredAppointments, currentDate, viewMode]);
 
   // Event handlers
   const handleDateChange = (date: Date) => {
@@ -317,7 +247,7 @@ const AppointmentCalender: React.FC = () => {
   };
 
   // Generate mock appointments for development/demo
-  const generateMockAppointments = (): Appointment[] => {
+  const generateMockAppointments = useCallback((): Appointment[] => {
     const mockAppointments: Appointment[] = [];
     const doctorIds = ["d-001", "d-002", "d-003"];
     const patientIds = ["p-001", "p-002", "p-003", "p-004", "p-005"];
@@ -410,7 +340,77 @@ const AppointmentCalender: React.FC = () => {
     }
 
     return mockAppointments;
-  };
+  }, [currentDate, viewMode]); // Add dependencies here
+
+  // Memoize fetch functions to prevent infinite loops
+  const fetchAppointments = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      // Get date range based on view mode
+      let startDate, endDate;
+
+      if (viewMode === ViewMode.Day) {
+        startDate = format(currentDate, "yyyy-MM-dd");
+        endDate = format(currentDate, "yyyy-MM-dd");
+      } else if (viewMode === ViewMode.Week) {
+        startDate = format(
+          startOfWeek(currentDate, { weekStartsOn: 0 }),
+          "yyyy-MM-dd"
+        );
+        endDate = format(
+          endOfWeek(currentDate, { weekStartsOn: 0 }),
+          "yyyy-MM-dd"
+        );
+      } else {
+        // Month view (we'll get a bit more data to show the full calendar grid)
+        const firstDay = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          1
+        );
+        const lastDay = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          0
+        );
+
+        // Get the first day of the week that contains the first day of the month
+        startDate = format(
+          startOfWeek(firstDay, { weekStartsOn: 0 }),
+          "yyyy-MM-dd"
+        );
+        // Get the last day of the week that contains the last day of the month
+        endDate = format(endOfWeek(lastDay, { weekStartsOn: 0 }), "yyyy-MM-dd");
+      }
+
+      try {
+        const response = await api.get("/appointments", {
+          params: { startDate, endDate },
+        });
+
+        setAppointments(response.data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching appointments:", err);
+        setError("Failed to load appointments. Please try again.");
+        // For demo purposes, let's generate some mock data
+        setAppointments(generateMockAppointments());
+      } finally {
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error("Error in appointment fetching process:", err);
+      setError("An unexpected error occurred. Please try again.");
+      setLoading(false);
+    }
+  }, [currentDate, viewMode, generateMockAppointments]); // Add generateMockAppointments here
+
+  // Fetch appointments when date or view mode changes
+  useEffect(() => {
+    fetchAppointments();
+    fetchDoctors();
+  }, [currentDate, viewMode, fetchAppointments, fetchDoctors]);
 
   return (
     <Container maxWidth="xl" sx={{ py: 3 }}>
@@ -511,4 +511,4 @@ const AppointmentCalender: React.FC = () => {
   );
 };
 
-export default AppointmentCalender;
+export default AppointmentCalendar;
