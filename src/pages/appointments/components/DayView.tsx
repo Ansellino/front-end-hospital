@@ -7,7 +7,6 @@ import {
   Tooltip,
   Divider,
   Button,
-  alpha,
 } from "@mui/material";
 import { format, parseISO, addMinutes } from "date-fns";
 import { Add as AddIcon } from "@mui/icons-material";
@@ -25,6 +24,7 @@ const START_HOUR = 8;
 const END_HOUR = 19;
 const PX_PER_HOUR = 120; // 60px per 30 minutes
 const TIME_SLOT_INTERVAL = 30; // 30 minutes interval for time slots
+const APPOINTMENT_HEIGHT = 90; // Fixed height for all appointments
 
 const DayView: React.FC<DayViewProps> = ({
   day,
@@ -77,23 +77,20 @@ const DayView: React.FC<DayViewProps> = ({
     return slots;
   }, [day.date, totalHours]);
 
-  // Calculate appointment position and duration
+  // Calculate appointment position with fixed height
   const getAppointmentStyle = (appointment: Appointment) => {
     const startTime = parseISO(appointment.startTime);
-    const endTime = parseISO(appointment.endTime);
-
-    const durationMinutes = Math.round(
-      (endTime.getTime() - startTime.getTime()) / (1000 * 60)
-    );
 
     const startMinutes = startTime.getHours() * 60 + startTime.getMinutes();
     const slotStartMinutes = START_HOUR * 60;
     const topPosition = (startMinutes - slotStartMinutes) * 2; // 2px per minute
 
+    // Apply a fixed height regardless of duration
     return {
       top: `${topPosition}px`,
-      height: `${durationMinutes * 2}px`, // 2px per minute
+      height: `${APPOINTMENT_HEIGHT}px`,
       backgroundColor: statusColors[appointment.status] || "#ccc",
+      position: "relative",
     };
   };
 
@@ -199,11 +196,19 @@ const DayView: React.FC<DayViewProps> = ({
           {/* Appointments */}
           {day.appointments.map((appointment) => {
             const isHovered = hoveredAppointmentId === appointment.id;
+            const appointmentStartTime = parseISO(appointment.startTime);
+            const appointmentEndTime = parseISO(appointment.endTime);
+
+            // Calculate duration in minutes for display
+            const durationMinutes = Math.round(
+              (appointmentEndTime.getTime() - appointmentStartTime.getTime()) /
+                (1000 * 60)
+            );
 
             return (
               <Box
                 key={appointment.id}
-                className={`absolute left-2 right-2 rounded-md p-2 text-white cursor-pointer overflow-hidden transition-all duration-200 ${
+                className={`absolute left-2 right-2 rounded-md p-3 text-white cursor-pointer transition-all duration-200 ${
                   isHovered
                     ? "shadow-lg transform scale-[1.02] z-50"
                     : "shadow-sm z-10"
@@ -224,27 +229,32 @@ const DayView: React.FC<DayViewProps> = ({
               >
                 <Tooltip
                   title={`${appointment.title} (${format(
-                    parseISO(appointment.startTime),
+                    appointmentStartTime,
                     "h:mm a"
-                  )} - ${format(parseISO(appointment.endTime), "h:mm a")})`}
+                  )} - ${format(appointmentEndTime, "h:mm a")})`}
                   placement="top"
                   arrow
                 >
-                  <Box className="h-full flex flex-col">
+                  <Box className="flex flex-col h-full">
                     <Typography
                       variant="subtitle2"
-                      className="font-medium truncate"
+                      className="font-bold text-white mb-1"
                     >
                       {appointment.title}
                     </Typography>
-                    <Typography
-                      variant="caption"
-                      className="truncate opacity-90"
-                    >
-                      {format(parseISO(appointment.startTime), "h:mm a")} -{" "}
-                      {format(parseISO(appointment.endTime), "h:mm a")}
-                    </Typography>
-                    <Box className="mt-auto">
+
+                    <Box className="flex justify-between items-center">
+                      <Typography variant="caption" className="font-medium">
+                        {format(appointmentStartTime, "h:mm a")} -{" "}
+                        {format(appointmentEndTime, "h:mm a")}
+                      </Typography>
+
+                      <Typography variant="caption" className="font-medium">
+                        {durationMinutes} min
+                      </Typography>
+                    </Box>
+
+                    <Box className="mt-auto flex justify-between items-center pt-2">
                       <Chip
                         size="small"
                         label={appointment.status}
@@ -253,6 +263,20 @@ const DayView: React.FC<DayViewProps> = ({
                           backgroundColor: "rgba(255,255,255,0.25)",
                           color: "inherit",
                           fontWeight: 500,
+                          height: "20px",
+                          ".MuiChip-label": { px: 1 },
+                        }}
+                      />
+
+                      <Chip
+                        size="small"
+                        label={appointment.type}
+                        className="text-xs"
+                        sx={{
+                          backgroundColor: "rgba(255,255,255,0.15)",
+                          color: "inherit",
+                          fontWeight: 500,
+                          height: "20px",
                           ".MuiChip-label": { px: 1 },
                         }}
                       />
