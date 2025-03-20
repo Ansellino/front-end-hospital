@@ -506,13 +506,23 @@ const StaffForm: React.FC = () => {
                 <Paper
                   key={index}
                   variant="outlined"
-                  sx={{ p: 2, mb: 2, position: "relative" }}
+                  sx={{ p: 2, mb: 2, position: "relative", pr: 8 }} // Added right padding
                 >
                   <IconButton
                     size="small"
                     onClick={() => handleDeleteSchedule(index)}
-                    sx={{ position: "absolute", top: 8, right: 8 }}
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      right: 8,
+                      transform: "translateY(-50%)",
+                      backgroundColor: "rgba(255, 255, 255, 0.8)",
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 0, 0, 0.1)",
+                      },
+                    }}
                     color="error"
+                    aria-label="Delete schedule"
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -626,13 +636,23 @@ const StaffForm: React.FC = () => {
                 <Paper
                   key={index}
                   variant="outlined"
-                  sx={{ p: 2, mb: 2, position: "relative" }}
+                  sx={{ p: 2, mb: 2, position: "relative", pr: 8 }} // Added right padding
                 >
                   <IconButton
                     size="small"
                     onClick={() => handleDeleteQualification(index)}
-                    sx={{ position: "absolute", top: 8, right: 8 }}
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      right: 8,
+                      transform: "translateY(-50%)",
+                      backgroundColor: "rgba(255, 255, 255, 0.8)",
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 0, 0, 0.1)",
+                      },
+                    }}
                     color="error"
+                    aria-label="Delete qualification"
                   >
                     <DeleteIcon />
                   </IconButton>

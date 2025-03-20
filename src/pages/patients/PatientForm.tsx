@@ -19,13 +19,19 @@ import {
   CircularProgress,
   Alert,
   FormHelperText,
+  Avatar,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  ArrowBack as ArrowBackIcon,
+} from "@mui/icons-material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import * as patientService from "../../services/patientService";
 import { Patient } from "../../interfaces/patient";
+import { useAuth } from "../../contexts/AuthContext";
 
 const validationSchema = Yup.object({
   firstName: Yup.string().required("First name is required"),
@@ -59,13 +65,19 @@ const validationSchema = Yup.object({
 const PatientForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { hasPermission } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   // For dynamic medical history fields
   const [newAllergy, setNewAllergy] = useState("");
   const [newCondition, setNewCondition] = useState("");
+
+  // Determine if we're in edit mode
+  const isEditMode = Boolean(id);
+  const pageTitle = isEditMode ? "Edit Patient" : "Add New Patient";
 
   const initialValues: Omit<Patient, "id" | "createdAt" | "updatedAt"> = {
     firstName: "",
@@ -103,16 +115,36 @@ const PatientForm: React.FC = () => {
   const formik = useFormik({
     initialValues,
     validationSchema,
-    enableReinitialize: true,
+    enableReinitialize: true, // Important for edit mode to work properly
     onSubmit: async (values) => {
+      if (!hasPermission(isEditMode ? "edit:patients" : "create:patients")) {
+        setError("You don't have permission to perform this action");
+        return;
+      }
+
       setIsSubmitting(true);
+      setError(null);
+
       try {
-        if (id) {
+        console.log(`${isEditMode ? "Updating" : "Creating"} patient:`, values);
+
+        if (isEditMode && id) {
+          // Edit mode - update existing patient
           await patientService.updatePatient(id, values);
+          console.log("Patient updated successfully");
+          setSuccess(true);
+          setTimeout(() => {
+            navigate(`/patients/${id}`);
+          }, 1500);
         } else {
-          await patientService.createPatient(values);
+          // Create mode - add new patient
+          const result = await patientService.createPatient(values);
+          console.log("Patient created successfully:", result);
+          setSuccess(true);
+          setTimeout(() => {
+            navigate("/patients");
+          }, 1500);
         }
-        navigate("/patients");
       } catch (err) {
         console.error("Error saving patient:", err);
         setError("Failed to save patient data. Please try again.");
@@ -124,24 +156,29 @@ const PatientForm: React.FC = () => {
 
   // Fetch patient data if in edit mode
   useEffect(() => {
-    if (id) {
+    if (isEditMode && id) {
       setLoading(true);
+      console.log("Fetching patient data for ID:", id);
+
       patientService
         .getPatientById(id)
         .then((data) => {
-          // We need to clean the data object to match our form structure
-          // Remove id, createdAt, updatedAt fields that are not in the form
+          console.log("Patient data loaded successfully:", data);
+
+          // Clean the data object to match our form structure
           const { id: _, createdAt: __, updatedAt: ___, ...formData } = data;
+
           formik.setValues(formData);
-          setLoading(false);
         })
         .catch((err) => {
           console.error("Error fetching patient:", err);
           setError("Failed to load patient data. Please try again.");
+        })
+        .finally(() => {
           setLoading(false);
         });
     }
-  }, [id, formik]);
+  }, [id, isEditMode]); // Remove formik from dependencies to prevent infinite loops
 
   // Helper functions for dynamic medical history fields
   const handleAddAllergy = () => {
@@ -176,6 +213,7 @@ const PatientForm: React.FC = () => {
     formik.setFieldValue("medicalHistory.chronicConditions", conditions);
   };
 
+  // Show loading state while fetching data
   if (loading) {
     return (
       <Box
@@ -194,9 +232,15 @@ const PatientForm: React.FC = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h5" gutterBottom>
-          {id ? "Edit Patient" : "Add New Patient"}
-        </Typography>
+        {/* Header with back button */}
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+          <IconButton onClick={() => navigate("/patients")} sx={{ mr: 2 }}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h5" component="h1">
+            {pageTitle}
+          </Typography>
+        </Box>
 
         {error && (
           <Alert severity="error" sx={{ mb: 3 }}>
@@ -204,9 +248,16 @@ const PatientForm: React.FC = () => {
           </Alert>
         )}
 
+        {success && (
+          <Alert severity="success" sx={{ mb: 3 }}>
+            Patient {isEditMode ? "updated" : "created"} successfully!
+          </Alert>
+        )}
+
         <form onSubmit={formik.handleSubmit}>
+          {/* Personal Information Section */}
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+            <Typography variant="h6" gutterBottom>
               Personal Information
             </Typography>
             <Divider sx={{ mb: 3 }} />
@@ -335,8 +386,9 @@ const PatientForm: React.FC = () => {
             </Grid>
           </Box>
 
+          {/* Address Section */}
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+            <Typography variant="h6" gutterBottom>
               Address
             </Typography>
             <Divider sx={{ mb: 3 }} />
@@ -443,8 +495,9 @@ const PatientForm: React.FC = () => {
             </Grid>
           </Box>
 
+          {/* Emergency Contact Section */}
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+            <Typography variant="h6" gutterBottom>
               Emergency Contact
             </Typography>
             <Divider sx={{ mb: 3 }} />
@@ -512,8 +565,9 @@ const PatientForm: React.FC = () => {
             </Grid>
           </Box>
 
+          {/* Medical History Section */}
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+            <Typography variant="h6" gutterBottom>
               Medical History
             </Typography>
             <Divider sx={{ mb: 3 }} />
@@ -591,8 +645,9 @@ const PatientForm: React.FC = () => {
             </Grid>
           </Box>
 
+          {/* Insurance Information Section */}
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+            <Typography variant="h6" gutterBottom>
               Insurance Information
             </Typography>
             <Divider sx={{ mb: 3 }} />
@@ -690,12 +745,15 @@ const PatientForm: React.FC = () => {
             </Grid>
           </Box>
 
+          {/* Submit Button Group */}
           <Box
             sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 4 }}
           >
             <Button
               variant="outlined"
-              onClick={() => navigate("/patients")}
+              onClick={() =>
+                navigate(isEditMode && id ? `/patients/${id}` : "/patients")
+              }
               disabled={isSubmitting}
             >
               Cancel
@@ -703,10 +761,10 @@ const PatientForm: React.FC = () => {
             <Button
               type="submit"
               variant="contained"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !formik.isValid}
               startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
             >
-              {id ? "Update Patient" : "Add Patient"}
+              {isEditMode ? "Update Patient" : "Add Patient"}
             </Button>
           </Box>
         </form>

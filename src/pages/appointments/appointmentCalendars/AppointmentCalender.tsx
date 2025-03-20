@@ -215,7 +215,7 @@ const AppointmentCalendar: React.FC = () => {
   };
 
   const handleEditAppointment = (id: string) => {
-    navigate(`/appointments/edit/${id}`);
+    navigate(`/appointments/${id}/edit`);
     handleCloseDetailDialog();
   };
 

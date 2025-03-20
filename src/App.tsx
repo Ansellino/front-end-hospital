@@ -26,6 +26,8 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import BillingPage from "./pages/billing/BillingPages";
 import InvoiceForm from "./pages/billing/InvoiceForm";
+import InvoiceDetail from "./pages/billing/InvoiceDetail"; // Add this line
+import NotificationsPage from "./pages/notifications/NotificationsPage"; // Add this import at the top
 
 // Theme
 import theme from "./theme";
@@ -53,7 +55,6 @@ const App: React.FC = () => {
                   element={<Navigate to="/dashboard" replace />}
                 />
                 <Route path="/dashboard" element={<Dashboard />} />
-
                 {/* Patient routes */}
                 <Route
                   path="/patients"
@@ -87,7 +88,6 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-
                 {/* Appointment routes */}
                 <Route
                   path="/appointments"
@@ -113,7 +113,6 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-
                 {/* Staff routes */}
                 <Route
                   path="/staff"
@@ -147,11 +146,20 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-
                 {/* Billing routes */}
                 <Route path="/billing" element={<BillingPage />} />
                 <Route path="/billing/new-invoice" element={<InvoiceForm />} />
-
+                <Route path="/billing/:id" element={<InvoiceDetail />} />{" "}
+                {/* Add this line */}
+                {/* Notifications route - FIXED */}
+                <Route
+                  path="/notifications"
+                  element={
+                    <ProtectedRoute>
+                      <NotificationsPage />
+                    </ProtectedRoute>
+                  }
+                />
                 {/* Settings route */}
                 <Route path="/settings" element={<Settings />} />
               </Route>
