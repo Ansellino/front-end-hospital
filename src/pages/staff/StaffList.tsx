@@ -155,6 +155,7 @@ const StaffList: React.FC = () => {
   };
 
   const handleEditStaff = (id: string) => {
+    console.log("Navigating to edit staff with ID:", id);
     navigate(`/staff/${id}/edit`);
   };
 

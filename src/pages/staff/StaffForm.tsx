@@ -132,21 +132,37 @@ const StaffForm: React.FC = () => {
   useEffect(() => {
     if (id) {
       setLoading(true);
+      console.log("Fetching staff data for ID:", id);
+
       staffService
         .getStaffById(id)
         .then((data) => {
-          // We need to clean the data object to match our form structure
-          const { id: _, createdAt: __, updatedAt: ___, ...formData } = data;
+          console.log("Staff data loaded:", data);
+          // Ensure arrays exist even if they're null or undefined in the data
+          const preparedData = {
+            ...data,
+            workSchedule: data.workSchedule || [],
+            qualifications: data.qualifications || [],
+          };
+
+          // Clean the data object
+          const {
+            id: _,
+            createdAt: __,
+            updatedAt: ___,
+            ...formData
+          } = preparedData;
           formik.setValues(formData);
-          setLoading(false);
         })
         .catch((err) => {
           console.error("Error fetching staff:", err);
           setError("Failed to load staff data. Please try again.");
+        })
+        .finally(() => {
           setLoading(false);
         });
     }
-  }, [id, formik]);
+  }, [id]); // IMPORTANT: Remove formik from dependencies to prevent infinite loop
 
   // Helper functions for work schedule
   const handleAddSchedule = () => {
