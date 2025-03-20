@@ -34,6 +34,7 @@ import {
   Save,
 } from "@mui/icons-material";
 import { useAuth } from "../contexts/AuthContext";
+import { useTheme } from "../contexts/ThemeContext"; // Import the theme hook
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -59,6 +60,7 @@ function TabPanel(props: TabPanelProps) {
 
 const Settings: React.FC = () => {
   const { currentUser } = useAuth();
+  const { themeMode, setThemeMode } = useTheme(); // Use the theme context
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -94,9 +96,9 @@ const Settings: React.FC = () => {
     newFeatures: false,
   });
 
-  // Appearance settings state
+  // Appearance settings state - initialize with the current theme mode
   const [appearance, setAppearance] = useState({
-    theme: "light",
+    theme: themeMode, // Get initial value from context
     density: "comfortable",
     fontSize: "medium",
     highContrast: false,
@@ -141,6 +143,11 @@ const Settings: React.FC = () => {
 
   // Appearance change handlers
   const handleAppearanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.name === "theme") {
+      // Apply theme change immediately via context
+      setThemeMode(e.target.value as "light" | "dark" | "system");
+    }
+
     setAppearance({
       ...appearance,
       [e.target.name]: e.target.value,

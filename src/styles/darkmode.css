@@ -1,0 +1,24 @@
+/* Dark mode styles */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+/* Additional dark mode styles */
+.dark .MuiPaper-root {
+  background-color: #1e1e1e;
+}
+
+.dark .MuiAppBar-root {
+  background-color: #272727;
+}
+
+.dark .MuiDrawer-paper {
+  background-color: #1a1a1a;
+}
+
+/* Add more custom dark mode styles as needed */

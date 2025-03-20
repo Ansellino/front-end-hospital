@@ -1,8 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ThemeProvider, CssBaseline } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 
 // Layout
 import MainLayout from "./layouts/MainLayout";
@@ -26,16 +25,15 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import BillingPage from "./pages/billing/BillingPages";
 import InvoiceForm from "./pages/billing/InvoiceForm";
-import InvoiceDetail from "./pages/billing/InvoiceDetail"; // Add this line
-import NotificationsPage from "./pages/notifications/NotificationsPage"; // Add this import at the top
+import InvoiceDetail from "./pages/billing/InvoiceDetail";
+import NotificationsPage from "./pages/notifications/NotificationsPage";
 
 // Theme
-import theme from "./theme";
+import { ThemeProvider } from "./contexts/ThemeContext"; // Import the new ThemeProvider
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <ThemeProvider>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <BrowserRouter>
           <AuthProvider>
@@ -149,9 +147,8 @@ const App: React.FC = () => {
                 {/* Billing routes */}
                 <Route path="/billing" element={<BillingPage />} />
                 <Route path="/billing/new-invoice" element={<InvoiceForm />} />
-                <Route path="/billing/:id" element={<InvoiceDetail />} />{" "}
-                {/* Add this line */}
-                {/* Notifications route - FIXED */}
+                <Route path="/billing/:id" element={<InvoiceDetail />} />
+                {/* Notifications route */}
                 <Route
                   path="/notifications"
                   element={
