@@ -24,6 +24,8 @@ import StaffDetail from "./pages/staff/StaffDetail";
 import StaffForm from "./pages/staff/StaffForm";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import BillingPage from "./pages/billing/BillingPages";
+import InvoiceForm from "./pages/billing/InvoiceForm";
 
 // Theme
 import theme from "./theme";
@@ -62,7 +64,7 @@ const App: React.FC = () => {
                   }
                 />
                 <Route
-                  path="/patients/new"
+                  path="/patients/add"
                   element={
                     <ProtectedRoute requiredPermission="create:patients">
                       <PatientForm />
@@ -145,6 +147,10 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
+
+                {/* Billing routes */}
+                <Route path="/billing" element={<BillingPage />} />
+                <Route path="/billing/new-invoice" element={<InvoiceForm />} />
 
                 {/* Settings route */}
                 <Route path="/settings" element={<Settings />} />

@@ -636,7 +636,7 @@ const PatientDetail: React.FC = () => {
               variant="contained"
               sx={{ mt: 2 }}
               onClick={() =>
-                navigate("/billing/new-invoice", {
+                navigate("/billing", {
                   state: { patientId: patient.id },
                 })
               }

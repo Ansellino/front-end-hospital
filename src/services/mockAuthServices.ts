@@ -20,6 +20,7 @@ const dummyUsers = [
       "create:appointments",
       "edit:appointments",
       "delete:appointments",
+      "create:staff",
       "view:staff",
       "edit:staff",
       "view:billing",

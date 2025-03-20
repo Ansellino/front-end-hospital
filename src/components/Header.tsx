@@ -11,6 +11,7 @@ import {
   ExitToApp as LogoutIcon,
   Settings as SettingsIcon,
   Badge as BadgeIcon,
+  Receipt as BillingIcon, // Add this new icon import
 } from "@mui/icons-material";
 
 interface HeaderProps {
@@ -32,6 +33,15 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     <header className="sticky top-0 z-10 flex items-center h-16 px-4 bg-white border-b border-gray-200">
       {/* Right section */}
       <div className="flex items-center ml-auto space-x-1">
+        {/* Billing Button */}
+        <button
+          className="p-2 text-gray-600 rounded-full hover:bg-gray-100"
+          onClick={() => navigate("/billing")}
+          aria-label="Billing"
+        >
+          <BillingIcon />
+        </button>
+
         {/* Notifications */}
         <div className="relative">
           <button

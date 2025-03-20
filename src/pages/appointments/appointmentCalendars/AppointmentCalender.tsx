@@ -211,7 +211,7 @@ const AppointmentCalendar: React.FC = () => {
   };
 
   const handleCreateAppointment = () => {
-    navigate("/appointments/create");
+    navigate("/appointments/new");
   };
 
   const handleEditAppointment = (id: string) => {
