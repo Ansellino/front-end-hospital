@@ -4,6 +4,166 @@ import { v4 as uuidv4 } from "uuid";
 import { addDays, subDays, format } from "date-fns";
 
 /**
+ * Generate mock invoices for development
+ */
+const generateMockInvoices = (count: number = 20): Invoice[] => {
+  const invoices: Invoice[] = [];
+  const statuses: Invoice["status"][] = [
+    "draft",
+    "sent",
+    "paid",
+    "overdue",
+    "canceled",
+  ];
+  const paymentMethods: ("cash" | "credit" | "insurance" | "check")[] = [
+    "cash",
+    "credit",
+    "insurance",
+    "check",
+  ];
+
+  // Generate mock patient IDs
+  const patientIds = Array.from(
+    { length: 10 },
+    (_, i) => `p-${String(i + 1).padStart(3, "0")}`
+  );
+
+  for (let i = 0; i < count; i++) {
+    const id = `inv-${uuidv4().substring(0, 8)}`;
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    const createdDate = subDays(new Date(), Math.floor(Math.random() * 60));
+    const dueDate = addDays(createdDate, 30);
+    const patientId = patientIds[Math.floor(Math.random() * patientIds.length)];
+
+    // Create mock items
+    const itemCount = Math.floor(Math.random() * 4) + 1;
+    const items: InvoiceItem[] = [];
+    let totalAmount = 0;
+
+    // Common medical services and their price ranges
+    const services = [
+      { name: "Office Visit", minPrice: 100, maxPrice: 200 },
+      { name: "Consultation", minPrice: 150, maxPrice: 300 },
+      { name: "Lab Test", minPrice: 80, maxPrice: 250 },
+      { name: "X-Ray", minPrice: 200, maxPrice: 400 },
+      { name: "Vaccination", minPrice: 50, maxPrice: 150 },
+      { name: "Physical Therapy", minPrice: 120, maxPrice: 180 },
+      { name: "Medication", minPrice: 30, maxPrice: 120 },
+      { name: "Surgery", minPrice: 1000, maxPrice: 5000 },
+    ];
+
+    for (let j = 0; j < itemCount; j++) {
+      const service = services[Math.floor(Math.random() * services.length)];
+      const unitPrice =
+        Math.floor(Math.random() * (service.maxPrice - service.minPrice)) +
+        service.minPrice;
+      const quantity = Math.floor(Math.random() * 3) + 1;
+      const amount = unitPrice * quantity;
+
+      items.push({
+        id: `item-${uuidv4().substring(0, 8)}`,
+        description: service.name,
+        quantity,
+        unitPrice,
+        amount,
+        serviceCode: `SVC-${Math.floor(Math.random() * 1000)}`,
+        taxRate: 0, // Assuming medical services are tax-exempt
+      });
+
+      totalAmount += amount;
+    }
+
+    // Calculate payment info based on status
+    let amountPaid = 0;
+    let balance = totalAmount;
+    let paidDate = undefined;
+
+    if (status === "paid") {
+      amountPaid = totalAmount;
+      balance = 0;
+      paidDate = addDays(
+        createdDate,
+        Math.floor(Math.random() * 15)
+      ).toISOString();
+    } else if (status === "sent" || status === "overdue") {
+      // Some invoices might be partially paid
+      if (Math.random() > 0.5) {
+        amountPaid = Math.floor(totalAmount * (Math.random() * 0.8));
+        balance = totalAmount - amountPaid;
+      }
+    }
+
+    // Create the invoice
+    invoices.push({
+      id,
+      patientId,
+      appointmentId:
+        Math.random() > 0.3 ? `appt-${uuidv4().substring(0, 8)}` : undefined,
+      items,
+      totalAmount,
+      amountPaid,
+      balance,
+      status,
+      dueDate: dueDate.toISOString(),
+      paidDate,
+      paymentMethod:
+        status === "paid"
+          ? paymentMethods[Math.floor(Math.random() * paymentMethods.length)]
+          : undefined,
+      createdAt: createdDate.toISOString(),
+      updatedAt: createdDate.toISOString(),
+    });
+  }
+
+  return invoices;
+};
+
+/**
+ * Generate mock payments for development
+ */
+const generateMockPayments = (
+  invoiceId: string,
+  count: number = 3
+): Payment[] => {
+  const payments: Payment[] = [];
+  const paymentMethods: Payment["paymentMethod"][] = [
+    "cash",
+    "credit",
+    "insurance",
+    "check",
+  ];
+  const staffIds = ["ADMIN-001", "REC-001", "REC-002"];
+
+  // If no invoiceId provided, generate random IDs
+  const invoiceIds = invoiceId
+    ? [invoiceId]
+    : Array.from({ length: count }, () => `inv-${uuidv4().substring(0, 8)}`);
+
+  for (let i = 0; i < count; i++) {
+    const date = subDays(new Date(), Math.floor(Math.random() * 30));
+    const method =
+      paymentMethods[Math.floor(Math.random() * paymentMethods.length)];
+    const amount = Math.floor(Math.random() * 1000) + 100;
+
+    payments.push({
+      id: `pmt-${uuidv4().substring(0, 8)}`,
+      invoiceId: invoiceIds[Math.min(i, invoiceIds.length - 1)],
+      amount,
+      paymentMethod: method,
+      transactionId:
+        method === "credit" || method === "insurance"
+          ? `tr-${uuidv4().substring(0, 8)}`
+          : undefined,
+      notes: `Payment received via ${method}`,
+      processedBy: staffIds[Math.floor(Math.random() * staffIds.length)],
+      processedDate: date.toISOString(),
+    });
+  }
+
+  return payments;
+};
+
+/**
  * Service for handling billing-related API operations
  */
 const BillingService = {
@@ -182,166 +342,9 @@ const BillingService = {
       };
     }
   },
-};
 
-/**
- * Generate mock invoices for development
- */
-const generateMockInvoices = (count: number = 20): Invoice[] => {
-  const invoices: Invoice[] = [];
-  const statuses: Invoice["status"][] = [
-    "draft",
-    "sent",
-    "paid",
-    "overdue",
-    "canceled",
-  ];
-  const paymentMethods: ("cash" | "credit" | "insurance" | "check")[] = [
-    "cash",
-    "credit",
-    "insurance",
-    "check",
-  ];
-
-  // Generate mock patient IDs
-  const patientIds = Array.from(
-    { length: 10 },
-    (_, i) => `p-${String(i + 1).padStart(3, "0")}`
-  );
-
-  for (let i = 0; i < count; i++) {
-    const id = `inv-${uuidv4().substring(0, 8)}`;
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
-    const createdDate = subDays(new Date(), Math.floor(Math.random() * 60));
-    const dueDate = addDays(createdDate, 30);
-    const patientId = patientIds[Math.floor(Math.random() * patientIds.length)];
-
-    // Create mock items
-    const itemCount = Math.floor(Math.random() * 4) + 1;
-    const items: InvoiceItem[] = [];
-    let totalAmount = 0;
-
-    // Common medical services and their price ranges
-    const services = [
-      { name: "Office Visit", minPrice: 100, maxPrice: 200 },
-      { name: "Consultation", minPrice: 150, maxPrice: 300 },
-      { name: "Lab Test", minPrice: 80, maxPrice: 250 },
-      { name: "X-Ray", minPrice: 200, maxPrice: 400 },
-      { name: "Vaccination", minPrice: 50, maxPrice: 150 },
-      { name: "Physical Therapy", minPrice: 120, maxPrice: 180 },
-      { name: "Medication", minPrice: 30, maxPrice: 120 },
-      { name: "Surgery", minPrice: 1000, maxPrice: 5000 },
-    ];
-
-    for (let j = 0; j < itemCount; j++) {
-      const service = services[Math.floor(Math.random() * services.length)];
-      const unitPrice =
-        Math.floor(Math.random() * (service.maxPrice - service.minPrice)) +
-        service.minPrice;
-      const quantity = Math.floor(Math.random() * 3) + 1;
-      const amount = unitPrice * quantity;
-
-      items.push({
-        id: `item-${uuidv4().substring(0, 8)}`,
-        description: service.name,
-        quantity,
-        unitPrice,
-        amount,
-        serviceCode: `SVC-${Math.floor(Math.random() * 1000)}`,
-        taxRate: 0, // Assuming medical services are tax-exempt
-      });
-
-      totalAmount += amount;
-    }
-
-    // Calculate payment info based on status
-    let amountPaid = 0;
-    let balance = totalAmount;
-    let paidDate = undefined;
-
-    if (status === "paid") {
-      amountPaid = totalAmount;
-      balance = 0;
-      paidDate = addDays(
-        createdDate,
-        Math.floor(Math.random() * 15)
-      ).toISOString();
-    } else if (status === "sent" || status === "overdue") {
-      // Some invoices might be partially paid
-      if (Math.random() > 0.5) {
-        amountPaid = Math.floor(totalAmount * (Math.random() * 0.8));
-        balance = totalAmount - amountPaid;
-      }
-    }
-
-    // Create the invoice
-    invoices.push({
-      id,
-      patientId,
-      appointmentId:
-        Math.random() > 0.3 ? `appt-${uuidv4().substring(0, 8)}` : undefined,
-      items,
-      totalAmount,
-      amountPaid,
-      balance,
-      status,
-      dueDate: dueDate.toISOString(),
-      paidDate,
-      paymentMethod:
-        status === "paid"
-          ? paymentMethods[Math.floor(Math.random() * paymentMethods.length)]
-          : undefined,
-      createdAt: createdDate.toISOString(),
-      updatedAt: createdDate.toISOString(),
-    });
-  }
-
-  return invoices;
-};
-
-/**
- * Generate mock payments for development
- */
-const generateMockPayments = (
-  invoiceId: string,
-  count: number = 3
-): Payment[] => {
-  const payments: Payment[] = [];
-  const paymentMethods: Payment["paymentMethod"][] = [
-    "cash",
-    "credit",
-    "insurance",
-    "check",
-  ];
-  const staffIds = ["ADMIN-001", "REC-001", "REC-002"];
-
-  // If no invoiceId provided, generate random IDs
-  const invoiceIds = invoiceId
-    ? [invoiceId]
-    : Array.from({ length: count }, () => `inv-${uuidv4().substring(0, 8)}`);
-
-  for (let i = 0; i < count; i++) {
-    const date = subDays(new Date(), Math.floor(Math.random() * 30));
-    const method =
-      paymentMethods[Math.floor(Math.random() * paymentMethods.length)];
-    const amount = Math.floor(Math.random() * 1000) + 100;
-
-    payments.push({
-      id: `pmt-${uuidv4().substring(0, 8)}`,
-      invoiceId: invoiceIds[Math.min(i, invoiceIds.length - 1)],
-      amount,
-      paymentMethod: method,
-      transactionId:
-        method === "credit" || method === "insurance"
-          ? `tr-${uuidv4().substring(0, 8)}`
-          : undefined,
-      notes: `Payment received via ${method}`,
-      processedBy: staffIds[Math.floor(Math.random() * staffIds.length)],
-      processedDate: date.toISOString(),
-    });
-  }
-
-  return payments;
+  // Expose the mock data generator as part of the service
+  generateMockInvoices,
 };
 
 export default BillingService;
