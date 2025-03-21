@@ -4,15 +4,15 @@
 
 @layer components {
   .sidebar-item {
-    @apply flex items-center px-4 py-3 text-gray-700 rounded-lg transition-colors duration-200;
+    @apply flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg transition-colors duration-200;
   }
 
   .sidebar-item-active {
-    @apply bg-primary-50 text-primary-700 font-medium;
+    @apply bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium;
   }
 
   .sidebar-item-inactive {
-    @apply hover:bg-gray-100;
+    @apply hover:bg-gray-100 dark:hover:bg-gray-800;
   }
 }
 

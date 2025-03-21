@@ -1,24 +1,1058 @@
-/* Dark mode styles */
+/* Dark mode styles - Enhanced for Patient Pages */
+
+/* General dark mode */
 .dark {
   color-scheme: dark;
 }
 
-.dark body {
-  background-color: #121212;
-  color: #e0e0e0;
+.dark body,
+.dark .MuiBox-root {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
 }
 
-/* Additional dark mode styles */
+/* Layout elements */
+.dark .MuiContainer-root {
+  background-color: #121212 !important;
+}
+
+/* Core MUI components in dark mode */
 .dark .MuiPaper-root {
-  background-color: #1e1e1e;
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
 }
 
 .dark .MuiAppBar-root {
-  background-color: #272727;
+  background-color: #272727 !important;
 }
 
 .dark .MuiDrawer-paper {
-  background-color: #1a1a1a;
+  background-color: #1a1a1a !important;
+  color: #e0e0e0 !important;
 }
 
-/* Add more custom dark mode styles as needed */
+/* All icons in dark mode should be white */
+.dark .MuiSvgIcon-root {
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiIconButton-root {
+  color: #e0e0e0 !important;
+}
+
+/* Typography elements */
+.dark .MuiTypography-root {
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiTypography-h5 {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.dark .MuiTypography-body1,
+.dark .MuiTypography-body2 {
+  color: #e0e0e0 !important;
+}
+
+/* Dividers and separators */
+.dark .MuiDivider-root {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Table elements - white borders and text */
+.dark .MuiTableCell-root {
+  color: #e0e0e0 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .MuiTableHead-root .MuiTableCell-root {
+  background-color: #272727 !important;
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiTableHead-root .MuiTableCell-root {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+.dark .MuiTableRow-root {
+  background-color: #1e1e1e !important;
+}
+
+.dark .MuiTableRow-root:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .MuiTableRow-root:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Fix table cells to have consistent background colors */
+.dark .MuiTableRow-root .MuiTableCell-root {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Fix patient name cells specifically */
+.dark .MuiTableRow-root .MuiTableCell-root .MuiTypography-root {
+  color: #ffffff !important;
+}
+
+.dark .MuiTableRow-root .MuiTableCell-root .MuiTypography-caption {
+  color: #aaaaaa !important;
+}
+
+/* Fix filter background color */
+.dark .filter-container,
+.dark .MuiAccordion-root,
+.dark .filter-panel {
+  background-color: #1e1e1e !important;
+}
+
+/* Fix table hover state */
+.dark .MuiTableRow-root:hover .MuiTableCell-root {
+  background-color: #2a2a2a !important;
+}
+
+/* Fix action buttons background */
+.dark .MuiTableRow-root .MuiTableCell-root .MuiIconButton-root {
+  background-color: transparent !important;
+}
+
+.dark .MuiTableRow-root .MuiTableCell-root .MuiIconButton-root:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Form controls */
+.dark .MuiOutlinedInput-root {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiOutlinedInput-root {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.23) !important;
+}
+
+.dark .MuiInputLabel-root,
+.dark .MuiFormLabel-root {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.dark .MuiSelect-select {
+  color: #ffffff !important;
+}
+
+.dark .MuiInputLabel-root {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.dark .MuiInputLabel-shrink {
+  color: #90caf9 !important;
+}
+
+/* Make dropdown background match other controls */
+.dark .MuiSelect-select,
+.dark .MuiInputBase-root {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Sidebar navigation */
+.dark .sidebar,
+.dark aside {
+  background-color: #1a1a1a !important;
+  border-right-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .sidebar-item-inactive {
+  color: #e0e0e0 !important;
+}
+
+.dark .sidebar-item-inactive:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .sidebar-item-active {
+  background-color: rgba(33, 150, 243, 0.15) !important;
+  color: #90caf9 !important;
+}
+
+/* Menu items */
+.dark .MuiMenuItem-root {
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiMenu-paper {
+  background-color: #2a2a2a !important;
+}
+
+/* Buttons */
+.dark .MuiButton-outlined {
+  border-color: rgba(255, 255, 255, 0.23) !important;
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiButton-text {
+  color: #90caf9 !important;
+}
+
+/* Tabs */
+.dark .MuiTabs-root {
+  background-color: #1e1e1e !important;
+}
+
+.dark .MuiTab-root {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.dark .Mui-selected {
+  color: #90caf9 !important;
+}
+
+/* Chips */
+.dark .MuiChip-root {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiChip-root {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.23) !important;
+}
+
+.dark .MuiChip-outlined {
+  background-color: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.dark .MuiChip-colorPrimary {
+  color: #90caf9 !important;
+  border-color: #90caf9 !important;
+}
+
+.dark .MuiChip-colorSecondary {
+  color: #f48fb1 !important;
+  border-color: #f48fb1 !important;
+}
+
+.dark .MuiChip-colorDefault {
+  color: #e0e0e0 !important;
+  border-color: #9e9e9e !important;
+}
+
+/* Consistent chip styling for gender display */
+.dark .MuiChip-root {
+  background-color: transparent !important;
+}
+
+.dark .MuiChip-outlined {
+  border-color: rgba(255, 255, 255, 0.23) !important;
+}
+
+/* Fix appointment status colors in dark mode */
+
+/* Ensure appointment status colors are preserved in dark mode */
+.dark .MuiChip-root[style*="background-color: rgb(63, 81, 181)"],  /* scheduled */
+.dark [style*="background-color: #3f51b5"] {
+  background-color: #3f51b5 !important;
+  opacity: 1 !important;
+}
+
+.dark .MuiChip-root[style*="background-color: rgb(76, 175, 80)"],  /* completed */
+.dark [style*="background-color: #4caf50"] {
+  background-color: #4caf50 !important;
+  opacity: 1 !important;
+}
+
+.dark .MuiChip-root[style*="background-color: rgb(244, 67, 54)"],  /* canceled */
+.dark [style*="background-color: #f44336"] {
+  background-color: #f44336 !important;
+  opacity: 1 !important;
+}
+
+.dark .MuiChip-root[style*="background-color: rgb(255, 152, 0)"],  /* no-show */
+.dark [style*="background-color: #ff9800"] {
+  background-color: #ff9800 !important;
+  opacity: 1 !important;
+}
+
+/* Ensure appointment type colors are preserved in dark mode */
+.dark .MuiChip-root[style*="background-color: rgb(33, 150, 243)"],  /* follow-up */
+.dark [style*="background-color: #2196f3"] {
+  background-color: #2196f3 !important;
+  opacity: 1 !important;
+}
+
+.dark .MuiChip-root[style*="background-color: rgb(63, 81, 181)"],  /* new-patient */
+.dark [style*="background-color: #3f51b5"] {
+  background-color: #3f51b5 !important;
+  opacity: 1 !important;
+}
+
+/* Fix appointment color display in all calendar views */
+.dark .appointment-chip,
+.dark .MuiChip-root[data-appointment-status],
+.dark .appointment-block {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Ensure white text on colored backgrounds */
+.dark .MuiChip-label {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Fix appointment status colors in all calendar views */
+
+/* Target all appointment elements with specific status colors */
+.dark [style*="background-color: #3f51b5"],
+.dark [style*="background-color: rgb(63, 81, 181)"] {
+  background-color: #3f51b5 !important;
+  opacity: 1 !important;
+  color: white !important;
+}
+
+.dark [style*="background-color: #4caf50"],
+.dark [style*="background-color: rgb(76, 175, 80)"] {
+  background-color: #4caf50 !important;
+  opacity: 1 !important;
+  color: white !important;
+}
+
+.dark [style*="background-color: #f44336"],
+.dark [style*="background-color: rgb(244, 67, 54)"] {
+  background-color: #f44336 !important;
+  opacity: 1 !important;
+  color: white !important;
+}
+
+.dark [style*="background-color: #ff9800"],
+.dark [style*="background-color: rgb(255, 152, 0)"] {
+  background-color: #ff9800 !important;
+  opacity: 1 !important;
+  color: white !important;
+}
+
+/* Make sure appointment chips preserve their colors */
+.dark .MuiChip-root[style*="background-color"] {
+  filter: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Fix for appointment blocks in all views */
+.dark .appointment-block,
+.dark [data-appointment-status="scheduled"] {
+  background-color: #3f51b5 !important;
+}
+
+.dark .appointment-block,
+.dark [data-appointment-status="completed"] {
+  background-color: #4caf50 !important;
+}
+
+.dark .appointment-block,
+.dark [data-appointment-status="canceled"] {
+  background-color: #f44336 !important;
+}
+
+.dark .appointment-block,
+.dark [data-appointment-status="no-show"] {
+  background-color: #ff9800 !important;
+}
+
+/* Ensure appointment text remains visible */
+.dark [style*="background-color"] .MuiTypography-root,
+.dark [style*="background-color"] .MuiChip-label {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Cards and content */
+.dark .MuiCard-root {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiCard-root {
+  background-color: #1e1e1e !important;
+}
+
+.dark .MuiCardContent-root {
+  background-color: #1e1e1e !important;
+}
+
+/* DatePicker and TimePicker */
+.dark .MuiPickersDay-root {
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiPickersCalendarHeader-root {
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiPickersDay-today {
+  border-color: #90caf9 !important;
+}
+
+.dark .MuiClock-pin,
+.dark .MuiClockPointer-root {
+  background-color: #90caf9 !important;
+}
+
+/* Dialog elements */
+.dark .MuiDialog-paper {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+}
+
+/* Header elements */
+.dark header {
+  background-color: #272727 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Main content area */
+.dark main {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Fix avatar background colors */
+.dark .MuiAvatar-colorDefault {
+  background-color: #2c2c2c !important;
+}
+
+/* Patient page specific dark mode fixes */
+
+/* Fix patient name headers and backgrounds */
+.dark .patient-card,
+.dark .MuiGrid-root .MuiPaper-root {
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+}
+
+/* Fix headers in patient details */
+.dark .patient-info-header,
+.dark .patient-section-header,
+.dark .MuiCardHeader-root {
+  background-color: #272727 !important;
+  color: #ffffff !important;
+}
+
+/* Fix action buttons */
+.dark .patient-actions .MuiButton-root,
+.dark .action-buttons .MuiButton-root,
+.dark .MuiButton-outlined {
+  border-color: rgba(255, 255, 255, 0.23) !important;
+  color: #ffffff !important;
+}
+
+.dark .MuiButton-contained {
+  background-color: #1976d2 !important;
+  color: #ffffff !important;
+}
+
+.dark .MuiButton-contained:hover {
+  background-color: #1565c0 !important;
+}
+
+/* Fix filter and search components */
+.dark .filter-container,
+.dark .search-container,
+.dark .filter-panel,
+.dark .MuiAccordion-root {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+}
+
+.dark .MuiInputBase-root.MuiOutlinedInput-root {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.23) !important;
+}
+
+/* Fix backgrounds for all other containers */
+.dark .detail-container .MuiPaper-root,
+.dark .patient-details .MuiPaper-root,
+.dark .patient-history .MuiPaper-root {
+  background-color: #1e1e1e !important;
+}
+
+/* Fix the avatar background */
+.dark .MuiAvatar-root {
+  background-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+/* Fix the data grid and tables */
+.dark .MuiDataGrid-root,
+.dark .MuiDataGrid-row,
+.dark .MuiDataGrid-cell {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .MuiDataGrid-columnHeaders {
+  background-color: #272727 !important;
+  color: #ffffff !important;
+}
+
+/* Fix background color consistency */
+.dark .MuiTableContainer-root,
+.dark .MuiTable-root,
+.dark .MuiListItem-root {
+  background-color: #1e1e1e !important;
+}
+
+/* Fix padding containers and boxes */
+.dark .MuiBox-root[style*="padding"],
+.dark .patient-container {
+  background-color: #121212 !important;
+}
+
+/* Make sure all labels have proper color */
+.dark .MuiFormLabel-root {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Fix search and filter inputs background */
+.dark .MuiAutocomplete-root .MuiOutlinedInput-root,
+.dark .MuiTextField-root .MuiOutlinedInput-root {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Fix patient detail page */
+.dark .patient-card .MuiCardContent-root,
+.dark .patient-card,
+.dark .patient-info-header {
+  background-color: #1e1e1e !important;
+}
+
+/* Fix insurance and status information */
+.dark .MuiTooltip-tooltip {
+  background-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+/* Ensure all table cells have consistent background in patient list */
+.dark .MuiTableRow-root .MuiTableCell-root {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Fix specifically for name column and action column */
+.dark .MuiTableRow-root .MuiTableCell-root:first-of-type,
+.dark .MuiTableRow-root .MuiTableCell-root:last-of-type {
+  background-color: #1e1e1e !important;
+}
+
+/* Keep hover state consistent */
+.dark .MuiTableRow-root:hover .MuiTableCell-root {
+  background-color: #2a2a2a !important;
+}
+
+/* Fix action buttons container */
+.dark .MuiTableRow-root .MuiTableCell-root .MuiBox-root {
+  background-color: transparent !important;
+}
+
+/* Fix patient detail page card backgrounds */
+.dark .patient-card .MuiCardContent-root {
+  background-color: #1e1e1e !important;
+}
+
+/* Fix table header contrast */
+.dark .MuiTableHead-root .MuiTableCell-root {
+  background-color: #272727 !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+/* Fix header background specifically for name and action column headers */
+.dark .MuiTableHead-root .MuiTableRow-root .MuiTableCell-root:first-of-type,
+.dark .MuiTableHead-root .MuiTableRow-root .MuiTableCell-root:last-of-type {
+  background-color: #272727 !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+/* Add this to ensure consistency when hovering */
+.dark
+  .MuiTableHead-root
+  .MuiTableRow-root:hover
+  .MuiTableCell-root:first-of-type,
+.dark
+  .MuiTableHead-root
+  .MuiTableRow-root:hover
+  .MuiTableCell-root:last-of-type {
+  background-color: #272727 !important;
+}
+
+/* Override for delete buttons - keep them red in dark mode */
+.dark .MuiIconButton-colorError .MuiSvgIcon-root {
+  color: #f44336 !important; /* Material UI red */
+}
+
+/* For delete buttons that might not have the error color prop */
+.dark button[color="error"] .MuiSvgIcon-root,
+.dark button[aria-label*="Delete"] .MuiSvgIcon-root,
+.dark button[aria-label*="delete"] .MuiSvgIcon-root {
+  color: #f44336 !important;
+}
+
+/* For DeleteIcon specifically, wherever it appears */
+.dark .MuiSvgIcon-root[data-testid="DeleteIcon"] {
+  color: #f44336 !important;
+}
+
+/* Comprehensive fix for appointment status colors in calendar views */
+
+/* Calendar-specific styles for appointment colors */
+.dark .appointment-block,
+.dark .appointment-item,
+.dark .appointment-chip,
+.dark [data-appointment-status],
+.dark .calendar-appointment {
+  opacity: 1 !important;
+  filter: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Target all display modes - Month, Week, Day views */
+.dark .MuiChip-root[style*="background"],
+.dark [style*="background-color"],
+.dark .appointment-item {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Status-specific overrides with higher specificity */
+/* Scheduled - Blue */
+.dark [style*="background-color: #3f51b5"],
+.dark [style*="background-color: rgb(63, 81, 181)"],
+.dark [data-appointment-status="scheduled"],
+.dark .appointment-block[data-status="scheduled"] {
+  background-color: #3f51b5 !important;
+  color: white !important;
+}
+
+/* Completed - Green */
+.dark [style*="background-color: #4caf50"],
+.dark [style*="background-color: rgb(76, 175, 80)"],
+.dark [data-appointment-status="completed"],
+.dark .appointment-block[data-status="completed"] {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+/* Canceled - Red */
+.dark [style*="background-color: #f44336"],
+.dark [style*="background-color: rgb(244, 67, 54)"],
+.dark [data-appointment-status="canceled"],
+.dark .appointment-block[data-status="canceled"] {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+/* No-show - Orange */
+.dark [style*="background-color: #ff9800"],
+.dark [style*="background-color: rgb(255, 152, 0)"],
+.dark [data-appointment-status="no-show"],
+.dark .appointment-block[data-status="no-show"] {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+/* Fix the text visibility in appointment blocks */
+.dark .appointment-block .MuiTypography-root,
+.dark [style*="background-color"] .MuiTypography-root,
+.dark [style*="background-color"] .MuiChip-label,
+.dark [data-appointment-status] .MuiTypography-root {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Fix chips in appointment displays */
+.dark .appointment-block .MuiChip-root,
+.dark [data-appointment-status] .MuiChip-root {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+}
+
+/* Fix appointment colors in calendar - ensure they're identical to light mode */
+
+/* Global appointment color overrides for dark mode */
+.dark [style*="background-color"],
+.dark .MuiChip-root[style*="background"],
+.dark .appointment-block,
+.dark .appointment-item,
+.dark .calendar-appointment,
+.dark [data-appointment-status],
+.dark [data-status] {
+  opacity: 1 !important;
+  filter: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Preserve specific status colors to match light mode exactly */
+/* Scheduled - Blue */
+.dark [style*="background-color: #3f51b5"],
+.dark [style*="background-color: rgb(63, 81, 181)"],
+.dark [data-appointment-status="scheduled"],
+.dark [data-status="scheduled"],
+.dark .MuiChip-root[data-status="scheduled"] {
+  background-color: #3f51b5 !important;
+  border-color: #3f51b5 !important;
+  color: white !important;
+}
+
+/* Completed - Green */
+.dark [style*="background-color: #4caf50"],
+.dark [style*="background-color: rgb(76, 175, 80)"],
+.dark [data-appointment-status="completed"],
+.dark [data-status="completed"],
+.dark .MuiChip-root[data-status="completed"] {
+  background-color: #4caf50 !important;
+  border-color: #4caf50 !important;
+  color: white !important;
+}
+
+/* Canceled - Red */
+.dark [style*="background-color: #f44336"],
+.dark [style*="background-color: rgb(244, 67, 54)"],
+.dark [data-appointment-status="canceled"],
+.dark [data-status="canceled"],
+.dark .MuiChip-root[data-status="canceled"] {
+  background-color: #f44336 !important;
+  border-color: #f44336 !important;
+  color: white !important;
+}
+
+/* No-show - Orange */
+.dark [style*="background-color: #ff9800"],
+.dark [style*="background-color: rgb(255, 152, 0)"],
+.dark [data-appointment-status="no-show"],
+.dark [data-status="no-show"],
+.dark .MuiChip-root[data-status="no-show"] {
+  background-color: #ff9800 !important;
+  border-color: #ff9800 !important;
+  color: white !important;
+}
+
+/* Fix monthly calendar view chips */
+.dark .MuiChip-root[sx*="background-color: #3f51b5"] {
+  background-color: #3f51b5 !important;
+}
+
+.dark .MuiChip-root[sx*="background-color: #4caf50"] {
+  background-color: #4caf50 !important;
+}
+
+.dark .MuiChip-root[sx*="background-color: #f44336"] {
+  background-color: #f44336 !important;
+}
+
+.dark .MuiChip-root[sx*="background-color: #ff9800"] {
+  background-color: #ff9800 !important;
+}
+
+/* Ensure appointment text remains white and readable */
+.dark .appointment-block .MuiTypography-root,
+.dark [style*="background-color"] .MuiTypography-root,
+.dark [style*="background-color"] span,
+.dark [style*="background-color"] .MuiChip-label,
+.dark [data-appointment-status] .MuiTypography-root,
+.dark [data-appointment-status] span {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Fix specifically for smaller chips in appointment calendars */
+.dark .appointment-chip,
+.dark .MuiChip-root[data-appointment-status] {
+  background-color: transparent !important; /* Remove default background */
+}
+
+/* Fix chips inside colored containers */
+.dark [style*="background-color"] .MuiChip-root {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+}
+
+/* Comprehensive fix for appointment calendar status colors */
+
+/* GLOBAL OVERRIDES FOR ALL APPOINTMENT COMPONENTS */
+.dark .appointment-block,
+.dark .appointment-item,
+.dark .appointment-chip,
+.dark .calendar-appointment,
+.dark .MuiChip-root[data-appointment-status],
+.dark .MuiChip-root[data-status],
+.dark [data-status],
+.dark [data-appointment-status] {
+  filter: none !important;
+  opacity: 1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* INLINE STYLE OVERRIDES */
+/* Target all elements with background color set via inline style */
+.dark [style*="background-color"] {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* SPECIFIC STATUS COLOR OVERRIDES BY COLOR VALUES */
+/* Scheduled - Blue */
+.dark [style*="background-color: #3f51b5"],
+.dark [style*="background-color: rgb(63, 81, 181)"],
+.dark [data-status="scheduled"],
+.dark [data-appointment-status="scheduled"],
+.dark .appointment-block[data-status="scheduled"],
+.dark .MuiChip-root[data-status="scheduled"] {
+  background-color: #3f51b5 !important;
+  border-color: #3f51b5 !important;
+  color: white !important;
+}
+
+/* Completed - Green */
+.dark [style*="background-color: #4caf50"],
+.dark [style*="background-color: rgb(76, 175, 80)"],
+.dark [data-status="completed"],
+.dark [data-appointment-status="completed"],
+.dark .appointment-block[data-status="completed"],
+.dark .MuiChip-root[data-status="completed"] {
+  background-color: #4caf50 !important;
+  border-color: #4caf50 !important;
+  color: white !important;
+}
+
+/* Canceled - Red */
+.dark [style*="background-color: #f44336"],
+.dark [style*="background-color: rgb(244, 67, 54)"],
+.dark [data-status="canceled"],
+.dark [data-appointment-status="canceled"],
+.dark .appointment-block[data-status="canceled"],
+.dark .MuiChip-root[data-status="canceled"] {
+  background-color: #f44336 !important;
+  border-color: #f44336 !important;
+  color: white !important;
+}
+
+/* No-show - Orange */
+.dark [style*="background-color: #ff9800"],
+.dark [style*="background-color: rgb(255, 152, 0)"],
+.dark [data-status="no-show"],
+.dark [data-appointment-status="no-show"],
+.dark .appointment-block[data-status="no-show"],
+.dark .MuiChip-root[data-status="no-show"] {
+  background-color: #ff9800 !important;
+  border-color: #ff9800 !important;
+  color: white !important;
+}
+
+/* FIX FOR CHIPS WITH SX PROP */
+/* These rules specifically target Material UI components using the sx prop */
+.dark .MuiChip-root[sx*="backgroundColor: '#3f51b5'"],
+.dark .MuiChip-root[sx*="backgroundColor: 'rgb(63, 81, 181)'"] {
+  background-color: #3f51b5 !important;
+}
+
+.dark .MuiChip-root[sx*="backgroundColor: '#4caf50'"],
+.dark .MuiChip-root[sx*="backgroundColor: 'rgb(76, 175, 80)'"] {
+  background-color: #4caf50 !important;
+}
+
+.dark .MuiChip-root[sx*="backgroundColor: '#f44336'"],
+.dark .MuiChip-root[sx*="backgroundColor: 'rgb(244, 67, 54)'"] {
+  background-color: #f44336 !important;
+}
+
+.dark .MuiChip-root[sx*="backgroundColor: '#ff9800'"],
+.dark .MuiChip-root[sx*="backgroundColor: 'rgb(255, 152, 0)'"] {
+  background-color: #ff9800 !important;
+}
+
+/* ENSURE TEXT IS WHITE AND READABLE */
+.dark .appointment-block .MuiTypography-root,
+.dark [style*="background-color"] .MuiTypography-root,
+.dark [style*="background-color"] span,
+.dark [data-status] .MuiTypography-root,
+.dark [data-appointment-status] .MuiTypography-root,
+.dark .MuiChip-root[data-status] .MuiChip-label,
+.dark .MuiChip-root[data-appointment-status] .MuiChip-label,
+.dark [style*="background-color"] .MuiChip-label {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Unified fix for appointment colors in calendar - MuiBox-root specific fix */
+
+/* Global fix for MuiBox-root elements with appointment status colors */
+.dark .MuiBox-root[style*="background-color"] {
+  opacity: 1 !important;
+  filter: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Fix for individual status colors within MuiBox-root */
+.dark .MuiBox-root[style*="background-color: rgb(63, 81, 181)"],
+.dark .MuiBox-root[style*="background-color: #3f51b5"] {
+  background-color: #3f51b5 !important; /* Scheduled - Blue */
+  color: white !important;
+}
+
+.dark .MuiBox-root[style*="background-color: rgb(76, 175, 80)"],
+.dark .MuiBox-root[style*="background-color: #4caf50"] {
+  background-color: #4caf50 !important; /* Completed - Green */
+  color: white !important;
+}
+
+.dark .MuiBox-root[style*="background-color: rgb(244, 67, 54)"],
+.dark .MuiBox-root[style*="background-color: #f44336"] {
+  background-color: #f44336 !important; /* Canceled - Red */
+  color: white !important;
+}
+
+.dark .MuiBox-root[style*="background-color: rgb(255, 152, 0)"],
+.dark .MuiBox-root[style*="background-color: #ff9800"] {
+  background-color: #ff9800 !important; /* No-show - Orange */
+  color: white !important;
+}
+
+/* Make sure text inside appointment boxes is white and readable */
+.dark .MuiBox-root[style*="background-color"] .MuiTypography-root,
+.dark .MuiBox-root[style*="background-color"] span {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Fix for chips inside MuiBox-root elements */
+.dark .MuiBox-root[style*="background-color"] .MuiChip-root {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+}
+
+/* Fix for calendar view opacity overrides */
+.dark .MuiBox-root[style*="opacity"] {
+  opacity: 1 !important;
+}
+
+/* ===== APPOINTMENT STATUS COLOR FIX FOR DARK MODE ===== */
+/* Comprehensive solution that targets all possible implementations */
+
+/* Global reset for all appointment elements to prevent fading/filtering */
+.dark .appointment-block,
+.dark .appointment-item,
+.dark .appointment-chip,
+.dark .calendar-appointment,
+.dark .MuiChip-root[data-appointment-status],
+.dark .MuiChip-root[data-status],
+.dark [data-status],
+.dark [data-appointment-status],
+.dark [style*="background-color"],
+.dark .MuiBox-root[style*="background-color"] {
+  filter: none !important;
+  opacity: 1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* STATUS COLORS - Using exact hex values from constants.ts */
+
+/* 1. SCHEDULED - Blue #3f51b5 */
+.dark [style*="background-color: #3f51b5"],
+.dark [style*="background-color: rgb(63, 81, 181)"],
+.dark [data-status="scheduled"],
+.dark [data-appointment-status="scheduled"],
+.dark .appointment-block[data-status="scheduled"],
+.dark .MuiBox-root[style*="background-color: #3f51b5"],
+.dark .MuiBox-root[style*="background-color: rgb(63, 81, 181)"] {
+  background-color: #3f51b5 !important;
+  border-color: #3f51b5 !important;
+  color: white !important;
+}
+
+/* 2. COMPLETED - Green #4caf50 */
+.dark [style*="background-color: #4caf50"],
+.dark [style*="background-color: rgb(76, 175, 80)"],
+.dark [data-status="completed"],
+.dark [data-appointment-status="completed"],
+.dark .appointment-block[data-status="completed"],
+.dark .MuiBox-root[style*="background-color: #4caf50"],
+.dark .MuiBox-root[style*="background-color: rgb(76, 175, 80)"] {
+  background-color: #4caf50 !important;
+  border-color: #4caf50 !important;
+  color: white !important;
+}
+
+/* 3. CANCELED - Red #f44336 */
+.dark [style*="background-color: #f44336"],
+.dark [style*="background-color: rgb(244, 67, 54)"],
+.dark [data-status="canceled"],
+.dark [data-appointment-status="canceled"],
+.dark .appointment-block[data-status="canceled"],
+.dark .MuiBox-root[style*="background-color: #f44336"],
+.dark .MuiBox-root[style*="background-color: rgb(244, 67, 54)"] {
+  background-color: #f44336 !important;
+  border-color: #f44336 !important;
+  color: white !important;
+}
+
+/* 4. NO-SHOW - Orange #ff9800 */
+.dark [style*="background-color: #ff9800"],
+.dark [style*="background-color: rgb(255, 152, 0)"],
+.dark [data-status="no-show"],
+.dark [data-appointment-status="no-show"],
+.dark .appointment-block[data-status="no-show"],
+.dark .MuiBox-root[style*="background-color: #ff9800"],
+.dark .MuiBox-root[style*="background-color: rgb(255, 152, 0)"] {
+  background-color: #ff9800 !important;
+  border-color: #ff9800 !important;
+  color: white !important;
+}
+
+/* Fix for legend items in calendar views */
+.dark .MuiBox-root[class*="w-3 h-3"][style*="background-color"] {
+  background-color: currentColor !important;
+}
+
+/* Fix status chips */
+.dark .MuiChip-root[data-status="scheduled"] {
+  background-color: #3f51b5 !important;
+}
+
+.dark .MuiChip-root[data-status="completed"] {
+  background-color: #4caf50 !important;
+}
+
+.dark .MuiChip-root[data-status="canceled"] {
+  background-color: #f44336 !important;
+}
+
+.dark .MuiChip-root[data-status="no-show"] {
+  background-color: #ff9800 !important;
+}
+
+/* Ensure all text within colored elements is white and readable */
+.dark [style*="background-color"] .MuiTypography-root,
+.dark [data-status] .MuiTypography-root,
+.dark [data-appointment-status] .MuiTypography-root,
+.dark .MuiBox-root[style*="background-color"] .MuiTypography-root,
+.dark .MuiChip-root[data-status] .MuiChip-label,
+.dark [style*="background-color"] span,
+.dark [style*="background-color"] .MuiChip-label {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}

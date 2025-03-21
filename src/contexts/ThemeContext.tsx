@@ -4,8 +4,6 @@ import {
   createTheme,
 } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-
-// Import your base theme
 import baseTheme from "../theme";
 
 type ThemeMode = "light" | "dark" | "system";
@@ -72,11 +70,105 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       palette: {
         ...baseTheme.palette,
         mode: actualMode,
-        // Adjust background colors based on mode
-        background: {
-          default: actualMode === "light" ? "#f5f5f5" : "#121212",
-          paper: actualMode === "light" ? "#ffffff" : "#1e1e1e",
-        },
+        // Enhanced dark mode colors
+        ...(actualMode === "dark" && {
+          primary: {
+            main: "#90caf9", // lighter blue for dark mode
+            dark: "#64b5f6",
+            light: "#bbdefb",
+            contrastText: "#fff",
+          },
+          secondary: {
+            main: "#f48fb1", // lighter pink for dark mode
+            dark: "#f06292",
+            light: "#f8bbd0",
+            contrastText: "#fff",
+          },
+          background: {
+            default: "#121212",
+            paper: "#1e1e1e",
+          },
+          text: {
+            primary: "#ffffff",
+            secondary: "#e0e0e0",
+          },
+          action: {
+            active: "#ffffff",
+            hover: "rgba(255, 255, 255, 0.08)",
+          },
+        }),
+        // Light mode colors remain the same
+      },
+      components: {
+        ...baseTheme.components,
+        // Override components for dark mode
+        ...(actualMode === "dark" && {
+          MuiPaper: {
+            styleOverrides: {
+              root: {
+                backgroundColor: "#1e1e1e",
+              },
+            },
+          },
+          MuiAppBar: {
+            styleOverrides: {
+              root: {
+                backgroundColor: "#272727",
+              },
+            },
+          },
+          MuiDrawer: {
+            styleOverrides: {
+              paper: {
+                backgroundColor: "#1a1a1a",
+              },
+            },
+          },
+          MuiTableCell: {
+            styleOverrides: {
+              root: {
+                borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
+              },
+              head: {
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+              },
+            },
+          },
+          // Enhance chip styling for gender display
+          MuiChip: {
+            styleOverrides: {
+              root: {
+                color: "#ffffff",
+                "&.MuiChip-outlined": {
+                  borderColor: "rgba(255, 255, 255, 0.23)",
+                },
+                "&.MuiChip-colorPrimary": {
+                  color: "#90caf9",
+                  borderColor: "#90caf9",
+                },
+                "&.MuiChip-colorSecondary": {
+                  color: "#f48fb1",
+                  borderColor: "#f48fb1",
+                },
+              },
+            },
+          },
+          // Enhance typography for better readability
+          MuiTypography: {
+            styleOverrides: {
+              h5: {
+                color: "#ffffff",
+                fontWeight: 500,
+              },
+              body1: {
+                color: "#e0e0e0",
+              },
+              body2: {
+                color: "#e0e0e0",
+              },
+            },
+          },
+        }),
       },
     });
 

@@ -1,38 +1,54 @@
 // layouts/MainLayout.tsx
-import React, { useState } from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import { Box } from "@mui/material";
 import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
+import { useTheme } from "../contexts/ThemeContext";
+
+// Import the dark mode styles if not already imported
+import "../styles/darkmode.css";
 
 const MainLayout: React.FC = () => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  const { themeMode } = useTheme(); // Access theme mode
 
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
+  // Determine if dark mode is active based on theme mode
+  const isDarkMode =
+    themeMode === "dark" ||
+    (themeMode === "system" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <Sidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
-
-      <div
-        className={`flex flex-col flex-grow transition-all duration-300 ${
-          sidebarCollapsed ? "ml-16" : "ml-64"
-        }`}
-      >
-        <Header onMenuClick={toggleSidebar} />
-
-        <main className="flex-grow p-6 overflow-auto">
-          <div className="container mx-auto">
-            <Outlet />
-          </div>
-        </main>
-
-        <footer className="px-6 py-4 text-sm text-center text-gray-500 border-t">
-          <p>© 2025 Healthcare Management System</p>
-        </footer>
-      </div>
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+      className={isDarkMode ? "dark" : ""} // Apply dark class directly
+    >
+      <Header onMenuClick={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <Box sx={{ display: "flex", flex: 1 }}>
+        <Sidebar
+          collapsed={sidebarCollapsed}
+          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+        />
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            pt: 2,
+            px: 2,
+            mt: 8,
+            ml: sidebarCollapsed ? 8 : 32,
+            transition: (theme) => theme.transitions.create("margin-left"),
+          }}
+        >
+          <Outlet />
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

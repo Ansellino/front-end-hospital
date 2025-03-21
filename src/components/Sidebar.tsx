@@ -24,23 +24,23 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
   return (
     <aside
-      className={`h-screen bg-white shadow-lg flex flex-col fixed left-0 top-0 bottom-0 transition-all duration-300 z-10 ${
+      className={`fixed top-0 left-0 h-full transition-all duration-300 z-20 ${
         collapsed ? "w-16" : "w-64"
-      }`}
+      } bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800`}
     >
       {/* Header with logo and toggle button */}
-      <div className="flex items-center h-16 border-b border-gray-200">
+      <div className="flex items-center h-16 border-b border-gray-200 dark:border-gray-800">
         {!collapsed && (
           <div className="flex items-center h-full px-5">
             <HospitalIcon className="mr-2 text-primary-500" />
-            <h2 className="text-xl font-semibold truncate text-primary-600">
+            <h2 className="text-xl font-semibold truncate text-primary-600 dark:text-primary-400">
               HealthcareMS
             </h2>
           </div>
         )}
         <button
           onClick={onToggle}
-          className={`p-2 rounded-full hover:bg-gray-100 text-gray-500 flex items-center justify-center ${
+          className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 flex items-center justify-center ${
             collapsed ? "mx-auto" : "ml-auto mr-2"
           }`}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}

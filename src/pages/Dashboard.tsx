@@ -214,9 +214,13 @@ const Dashboard: React.FC = () => {
 
         {/* Staff Performance */}
         {stats.staffPerformance && stats.staffPerformance.length > 0 && (
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} sx={{ mb: 4 }}>
+            {" "}
+            {/* Added bottom margin here */}
             <Card>
-              <CardContent>
+              <CardContent sx={{ pb: 4 }}>
+                {" "}
+                {/* Existing bottom padding */}
                 <Typography variant="h6" gutterBottom>
                   Staff Performance
                 </Typography>
@@ -282,49 +286,6 @@ const Dashboard: React.FC = () => {
                     </Box>
                   ))}
                 </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        )}
-
-        {/* Inventory Alerts */}
-        {stats.inventoryAlerts && stats.inventoryAlerts.length > 0 && (
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Inventory Alerts
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-                <Grid container spacing={2}>
-                  {stats.inventoryAlerts.map((item) => (
-                    <Grid item xs={12} sm={6} md={4} key={item.id}>
-                      <Card
-                        variant="outlined"
-                        sx={{
-                          bgcolor:
-                            item.status === "critical" ? "#fff5f5" : "#fff9c4",
-                          p: 1,
-                        }}
-                      >
-                        <Typography variant="subtitle2">{item.name}</Typography>
-                        <Typography variant="body2">
-                          Stock: {item.currentStock}/{item.reorderLevel}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          color={
-                            item.status === "critical"
-                              ? "error"
-                              : "warning.main"
-                          }
-                        >
-                          Status: {item.status}
-                        </Typography>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
               </CardContent>
             </Card>
           </Grid>
