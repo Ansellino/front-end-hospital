@@ -322,7 +322,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                 <button
                   onClick={() => {
                     setProfileOpen(false);
-                    navigate("/profile");
+                    navigate("/settings");
                   }}
                   className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
                 >

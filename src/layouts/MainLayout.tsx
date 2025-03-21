@@ -28,8 +28,8 @@ const MainLayout: React.FC = () => {
           </div>
         </main>
 
-        <footer className="py-4 px-6 text-center text-sm text-gray-500 border-t">
-          <p>© 2023 Healthcare Management System</p>
+        <footer className="px-6 py-4 text-sm text-center text-gray-500 border-t">
+          <p>© 2025 Healthcare Management System</p>
         </footer>
       </div>
     </div>
