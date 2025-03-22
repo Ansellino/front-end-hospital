@@ -38,6 +38,7 @@ import {
 } from "@mui/icons-material";
 import { format, formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import NotificationService from "../../services/notificationService";
 
 // Define interfaces
 interface Notification {
@@ -70,14 +71,9 @@ const NotificationsPage: React.FC = () => {
     const fetchNotifications = async () => {
       setLoading(true);
       try {
-        // In a real app, you would fetch from your API
-        // const response = await api.get('/notifications');
-        // setNotifications(response.data);
-
-        // For demo purposes, we'll use mock data
-        const mockNotifications = generateMockNotifications(30);
-        setNotifications(mockNotifications);
-        setFilteredNotifications(mockNotifications);
+        const notificationData = await NotificationService.getNotifications();
+        setNotifications(notificationData);
+        setFilteredNotifications(notificationData);
       } catch (err) {
         console.error("Error fetching notifications:", err);
         setError("Failed to load notifications. Please try again.");
@@ -88,84 +84,6 @@ const NotificationsPage: React.FC = () => {
 
     fetchNotifications();
   }, []);
-
-  // Generate mock notifications for demo purposes
-  const generateMockNotifications = (count: number): Notification[] => {
-    const types: (
-      | "appointment"
-      | "system"
-      | "patient"
-      | "billing"
-      | "staff"
-    )[] = ["appointment", "system", "patient", "billing", "staff"];
-
-    const mockData: Notification[] = [];
-
-    for (let i = 0; i < count; i++) {
-      const type = types[Math.floor(Math.random() * types.length)];
-      const isRead = Math.random() > 0.3; // 30% chance of being unread
-      const daysAgo = Math.floor(Math.random() * 7);
-      const hoursAgo = Math.floor(Math.random() * 24);
-      const date = new Date();
-      date.setDate(date.getDate() - daysAgo);
-      date.setHours(date.getHours() - hoursAgo);
-
-      let title = "";
-      let message = "";
-      let relatedId = "";
-      let actionUrl = "";
-
-      switch (type) {
-        case "appointment":
-          title = "Appointment Reminder";
-          message = `You have an appointment scheduled ${
-            daysAgo === 0 ? "today" : "tomorrow"
-          }`;
-          relatedId = ``;
-          actionUrl = `/appointments/${relatedId}`;
-          break;
-        case "system":
-          title = "System Update";
-          message = "System maintenance scheduled for this weekend";
-          break;
-        case "patient":
-          title = "New Patient Record";
-          message = "A new patient has been registered in the system";
-          relatedId = `p-${1000 + i}`;
-          actionUrl = `/patients/${relatedId}`;
-          break;
-        case "billing":
-          title = "Invoice Generated";
-          message = "A new invoice has been generated for patient";
-          relatedId = `inv-${1000 + i}`;
-          actionUrl = `/billing/${relatedId}`;
-          break;
-        case "staff":
-          title = "Staff Update";
-          message = "Dr. Johnson has updated their availability";
-          relatedId = `s-${1000 + i}`;
-          actionUrl = `/staff/${relatedId}`;
-          break;
-      }
-
-      mockData.push({
-        id: `notif-${i}`,
-        title,
-        message,
-        type,
-        isRead,
-        createdAt: date.toISOString(),
-        relatedId,
-        actionUrl,
-      });
-    }
-
-    // Sort by date (newest first)
-    return mockData.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  };
 
   // Apply filters and search
   useEffect(() => {
@@ -198,9 +116,7 @@ const NotificationsPage: React.FC = () => {
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      // In a real app, you would call your API
-      // await api.put(`/notifications/${id}/read`);
-
+      await NotificationService.markAsRead(id);
       // Update local state
       setNotifications((prev) =>
         prev.map((item) => (item.id === id ? { ...item, isRead: true } : item))

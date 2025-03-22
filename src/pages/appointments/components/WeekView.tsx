@@ -82,14 +82,14 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
       <Box className="px-2 py-1.5 mb-2 flex flex-wrap gap-2 justify-center items-center">
         <Typography
           variant="caption"
-          className="text-gray-600 mr-1 font-medium"
+          className="mr-1 font-medium text-gray-600"
         >
           Status :
         </Typography>
         {legend.map((item) => (
           <Box key={item.status} className="flex items-center">
             <Box
-              className="w-3 h-3 rounded-sm mr-1"
+              className="w-3 h-3 mr-1 rounded-sm"
               sx={{ backgroundColor: item.color }}
             />
             <Typography
@@ -161,12 +161,8 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
 
       {/* Time grid */}
       <Box
-        sx={{
-          display: "flex",
-          minHeight: isMobile ? "450px" : isTablet ? "500px" : "600px",
-          maxHeight: isMobile ? "70vh" : "calc(100vh - 250px)",
-          overflow: "auto",
-        }}
+        className="relative flex overflow-y-auto scrollbar-hide"
+        sx={{ height: "calc(100vh - 200px)" }}
       >
         {/* Time column */}
         <Box
@@ -297,7 +293,7 @@ const WeekView: React.FC<WeekViewProps> = ({ days, onAppointmentClick }) => {
                       onBlur={() => setHoveredAppointmentId(null)}
                     >
                       {/* Display content based on fixed height */}
-                      <Box className="p-1 h-full flex flex-col justify-between">
+                      <Box className="flex flex-col justify-between h-full p-1">
                         {/* Title */}
                         <Box className="flex items-center gap-1">
                           <Typography

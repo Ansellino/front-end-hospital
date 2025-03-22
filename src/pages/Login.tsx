@@ -21,6 +21,7 @@ import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import * as yup from "yup";
 import { useForm } from "../hooks/useForm";
+import LoginService from "../services/loginService"; // Add this import
 
 const validationSchema = yup.object({
   email: yup
@@ -49,7 +50,16 @@ const Login = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
-      return await login(values.email, values.password);
+      try {
+        // You can use LoginService directly here if you prefer
+        // const { user } = await LoginService.login(values.email, values.password);
+        // return user;
+
+        // Or continue using the login function from useAuth
+        return await login(values.email, values.password);
+      } catch (error) {
+        throw error;
+      }
     },
     onSuccess: () => {
       navigate(from, { replace: true });

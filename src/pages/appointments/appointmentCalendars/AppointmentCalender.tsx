@@ -479,16 +479,20 @@ const AppointmentCalendar: React.FC = () => {
               onAppointmentClick={handleAppointmentClick}
             />
           ) : viewMode === ViewMode.Week ? (
-            <WeekView
-              days={calendarDays}
-              onAppointmentClick={handleAppointmentClick}
-            />
+            <Box className="scrollbar-hide">
+              <WeekView
+                days={calendarDays}
+                onAppointmentClick={handleAppointmentClick}
+              />
+            </Box>
           ) : (
-            <DayView
-              day={calendarDays[0]}
-              onAppointmentClick={handleAppointmentClick}
-              onCreateAppointment={handleCreateAppointment}
-            />
+            <Box className="scrollbar-hide">
+              <DayView
+                day={calendarDays[0]}
+                onAppointmentClick={handleAppointmentClick}
+                onCreateAppointment={handleCreateAppointment}
+              />
+            </Box>
           )}
         </>
       )}

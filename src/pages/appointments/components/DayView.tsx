@@ -131,7 +131,7 @@ const DayView: React.FC<DayViewProps> = ({
 
       {/* Scrollable Container */}
       <Box
-        className="relative flex overflow-y-auto"
+        className="relative flex overflow-y-auto scrollbar-hide"
         sx={{ height: "calc(100vh - 200px)" }}
       >
         {/* Time Column */}

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { User } from "../interfaces/auth";
-import * as mockAuthService from "../services/mockAuthServices";
+import LoginService from "../services/loginService"; // Replace mockAuthService with LoginService
 
 interface AuthContextType {
   currentUser: User | null;
@@ -24,12 +24,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          // Use mock service to validate the token and get user
-          const user = await mockAuthService.getCurrentUser(token);
+          // Use LoginService instead of mockAuthService
+          const user = await LoginService.getCurrentUser(token);
           if (user) {
             setCurrentUser(user);
           } else {
-            // If token is invalid, remove it
             localStorage.removeItem("token");
           }
         } catch (error) {
@@ -45,8 +44,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (email: string, password: string): Promise<User> => {
     try {
-      // Use the mock service for login
-      const { user, token } = await mockAuthService.login(email, password);
+      // Use LoginService instead of mockAuthService
+      const { user, token } = await LoginService.login(email, password);
 
       // Store the token in localStorage
       localStorage.setItem("token", token);
@@ -61,7 +60,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    // Use LoginService for logout
+    LoginService.logout();
     setCurrentUser(null);
   };
 

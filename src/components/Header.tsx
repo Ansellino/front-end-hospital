@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { format, formatDistanceToNow } from "date-fns";
+import NotificationService from "../services/notificationService";
 
 // Import icons
 import {
@@ -40,20 +41,29 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<HeaderNotification[]>([]);
+  const [totalUnreadCount, setTotalUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  // Get recent notifications
+  // Perbarui useEffect untuk memuat ulang data ketika notifikasi berubah status
   useEffect(() => {
     const fetchNotifications = async () => {
       setLoading(true);
       try {
-        // In a real app, you would fetch notifications from your API
-        // const response = await api.get('/notifications/recent');
-        // setNotifications(response.data);
+        // Dapatkan notifikasi terbaru (yang ditampilkan di dropdown)
+        const notificationData =
+          await NotificationService.getRecentNotifications(10); // Minta lebih banyak untuk memastikan kita punya cukup unread
 
-        // For demo purposes, we'll use mock data
-        const mockNotifications = generateMockNotifications(5);
-        setNotifications(mockNotifications);
+        // Filter hanya yang unread (up to 5 dari backend mock)
+        const unreadNotifications = notificationData.filter(
+          (notif) => !notif.isRead
+        );
+
+        // Pastikan kita menampilkan notifikasi yang belum dibaca terlebih dahulu
+        setNotifications(notificationData);
+
+        // Dapatkan total count unread notifications dari seluruh sistem
+        const totalUnread = await NotificationService.getUnreadCount();
+        setTotalUnreadCount(totalUnread);
       } catch (err) {
         console.error("Error fetching notifications:", err);
       } finally {
@@ -64,93 +74,27 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     fetchNotifications();
   }, []);
 
-  // Mock notification generator (similar to the one in NotificationsPage)
-  const generateMockNotifications = (count: number): HeaderNotification[] => {
-    const types: (
-      | "appointment"
-      | "system"
-      | "patient"
-      | "billing"
-      | "staff"
-    )[] = ["appointment", "system", "patient", "billing", "staff"];
-
-    const mockData: HeaderNotification[] = [];
-
-    for (let i = 0; i < count; i++) {
-      const type = types[Math.floor(Math.random() * types.length)];
-      const isRead = i >= 3; // First 3 notifications are unread
-      const hoursAgo = Math.floor(Math.random() * 12) + 1;
-      const date = new Date();
-      date.setHours(date.getHours() - hoursAgo);
-
-      let title = "";
-      let message = "";
-      let actionUrl = "";
-
-      switch (type) {
-        case "appointment":
-          title = "Appointment Reminder";
-          message = "You have an appointment scheduled tomorrow";
-          actionUrl = `/appointments`;
-          break;
-        case "system":
-          title = "System Update";
-          message = "System maintenance scheduled for this weekend";
-          break;
-        case "patient":
-          title = "New Patient Record";
-          message = "A new patient has been registered in the system";
-          actionUrl = `/patients/p-${1000 + i}`;
-          break;
-        case "billing":
-          title = "Invoice Generated";
-          message = "A new invoice has been generated for patient";
-          actionUrl = `/billing/inv-${1000 + i}`;
-          break;
-        case "staff":
-          title = "Staff Update";
-          message = "Dr. Johnson has updated their availability";
-          actionUrl = `/staff/s-${1000 + i}`;
-          break;
-      }
-
-      mockData.push({
-        id: `notif-${i}`,
-        title,
-        message,
-        type,
-        isRead,
-        createdAt: date.toISOString(),
-        actionUrl,
-      });
-    }
-
-    // Sort by date (newest first)
-    return mockData.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  };
-
   const handleLogout = async () => {
     await logout();
     navigate("/login");
   };
 
-  // Count unread notifications
-  const unreadCount = notifications.filter((notif) => !notif.isRead).length;
+  // Gunakan totalUnreadCount untuk badge, bukan hanya count dari notifikasi yang diambil
+  const unreadCount = totalUnreadCount;
 
   // Handle marking all notifications as read
-  const handleMarkAllAsRead = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent dropdown from closing
-
-    // In a real app, you would call your API
-    // api.put('/notifications/mark-all-read');
-
-    // Update local state
-    setNotifications((prevNotifications) =>
-      prevNotifications.map((notif) => ({ ...notif, isRead: true }))
-    );
+  const handleMarkAllAsRead = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await NotificationService.markAllAsRead();
+      // Update local state
+      setNotifications((prev) =>
+        prev.map((notif) => ({ ...notif, isRead: true }))
+      );
+      setTotalUnreadCount(0); // Reset total count ke 0
+    } catch (err) {
+      console.error("Error marking notifications as read:", err);
+    }
   };
 
   // Handle clicking a notification
@@ -161,6 +105,11 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         n.id === notification.id ? { ...n, isRead: true } : n
       )
     );
+
+    // Kurangi total unread count
+    if (!notification.isRead) {
+      setTotalUnreadCount((prev) => Math.max(0, prev - 1));
+    }
 
     // Navigate to the relevant page if actionUrl exists
     if (notification.actionUrl) {
@@ -212,7 +161,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         </button>
 
         {/* Notifications */}
-        <div className="relative">
+        <div className="relative z-[999]">
           <button
             className="relative p-2 text-gray-600 rounded-full hover:bg-gray-100"
             onClick={() => setNotificationsOpen(!notificationsOpen)}
@@ -226,71 +175,88 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           </button>
 
           {notificationsOpen && (
-            <div className="absolute right-0 z-20 mt-2 overflow-hidden bg-white rounded-md shadow-lg w-80">
-              <div className="flex items-center justify-between px-4 py-3 font-medium text-gray-700 border-b border-gray-200">
-                <span>Notifications</span>
-                {unreadCount > 0 && (
-                  <span
-                    className="text-xs cursor-pointer text-primary-600 hover:text-primary-800"
-                    onClick={handleMarkAllAsRead}
-                  >
-                    Mark all as read
-                  </span>
-                )}
-              </div>
-              <div className="overflow-y-auto max-h-72">
-                {notifications.length === 0 ? (
-                  <div className="px-4 py-6 text-center text-gray-500">
-                    <p>No notifications</p>
-                  </div>
-                ) : (
-                  notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`px-4 py-3 transition-colors border-b border-gray-100 cursor-pointer hover:bg-gray-50 ${
-                        !notification.isRead ? "bg-blue-50" : ""
-                      }`}
-                      onClick={() => handleNotificationClick(notification)}
+            <>
+              {/* Backdrop to ensure dropdown is visible and prevent clicks on rest of page */}
+              <div
+                className="fixed inset-0 bg-black bg-opacity-10 z-[9998]"
+                onClick={() => setNotificationsOpen(false)}
+              ></div>
+
+              {/* Notification dropdown with improved positioning */}
+              <div
+                className="fixed right-4 top-16 z-[9999] overflow-hidden bg-white rounded-lg shadow-xl w-80 border border-gray-200 transform transition-all duration-200 ease-out scale-100 origin-top-right"
+                style={{
+                  maxHeight: "calc(100vh - 80px)",
+                  animation: "dropIn 0.2s ease-out forwards",
+                }}
+              >
+                <div className="flex items-center justify-between px-4 py-3 font-medium text-gray-700 border-b border-gray-200 bg-gray-50">
+                  <span>Notifications</span>
+                  {unreadCount > 0 && (
+                    <span
+                      className="text-xs cursor-pointer text-primary-600 hover:text-primary-800"
+                      onClick={handleMarkAllAsRead}
                     >
-                      <div className="flex items-start">
-                        <div className="flex-shrink-0 mt-1 mr-2">
-                          {getNotificationIcon(notification.type)}
-                        </div>
-                        <div className="flex-1">
-                          <p
-                            className={`text-sm text-gray-800 ${
-                              !notification.isRead ? "font-medium" : ""
-                            }`}
-                          >
-                            {notification.title}
-                          </p>
-                          <p className="text-xs text-gray-600 mt-0.5">
-                            {notification.message}
-                          </p>
-                          <p className="mt-1 text-xs text-gray-500">
-                            {formatDistanceToNow(
-                              new Date(notification.createdAt),
-                              { addSuffix: true }
-                            )}
-                          </p>
-                        </div>
-                      </div>
+                      Mark all as read
+                    </span>
+                  )}
+                </div>
+
+                {/* Rest of notification content remains the same */}
+                <div className="overflow-y-auto max-h-72 scrollbar-hide">
+                  {notifications.filter((notif) => !notif.isRead).length ===
+                  0 ? (
+                    <div className="px-4 py-6 text-center text-gray-500">
+                      <p>No unread notifications</p>
                     </div>
-                  ))
-                )}
+                  ) : (
+                    notifications
+                      .filter((notif) => !notif.isRead)
+                      .slice(0, 3) // Hanya tampilkan 3 notifikasi unread terbaru
+                      .map((notification) => (
+                        <div
+                          key={notification.id}
+                          className="px-4 py-3 transition-colors border-b border-gray-100 cursor-pointer hover:bg-gray-50 bg-blue-50"
+                          onClick={() => handleNotificationClick(notification)}
+                        >
+                          <div className="flex items-start">
+                            <div className="flex-shrink-0 mt-1 mr-2">
+                              {getNotificationIcon(notification.type)}
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-800">
+                                {notification.title}
+                              </p>
+                              <p className="text-xs text-gray-600 mt-0.5">
+                                {notification.message}
+                              </p>
+                              <p className="mt-1 text-xs text-gray-500">
+                                {formatDistanceToNow(
+                                  new Date(notification.createdAt),
+                                  { addSuffix: true }
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                  )}
+                </div>
+                <div className="px-4 py-2 text-center">
+                  <button
+                    className="text-sm font-medium text-primary-600 hover:text-primary-700"
+                    onClick={() => {
+                      navigate("/notifications");
+                      setNotificationsOpen(false);
+                    }}
+                  >
+                    {totalUnreadCount > 3
+                      ? `View all ${totalUnreadCount} notifications`
+                      : "View all notifications"}
+                  </button>
+                </div>
               </div>
-              <div className="px-4 py-2 text-center">
-                <button
-                  className="text-sm font-medium text-primary-600 hover:text-primary-700"
-                  onClick={() => {
-                    navigate("/notifications");
-                    setNotificationsOpen(false);
-                  }}
-                >
-                  View all notifications
-                </button>
-              </div>
-            </div>
+            </>
           )}
         </div>
 
