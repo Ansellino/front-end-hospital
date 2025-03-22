@@ -39,6 +39,7 @@ import {
 import { format, formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import NotificationService from "../../services/notificationService";
+import { usePagination } from "../../utils/pagination";
 
 // Define interfaces
 interface Notification {
@@ -62,10 +63,14 @@ const NotificationsPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
-  const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
 
-  const itemsPerPage = 10;
+  const { page, itemsPerPage, handlePageChange, getCurrentPageItems } =
+    usePagination(10, 1, true, [
+      filteredNotifications,
+      searchQuery,
+      typeFilter,
+    ]); // Reset when these change
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -167,22 +172,12 @@ const NotificationsPage: React.FC = () => {
     setSearchQuery(event.target.value);
   };
 
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setPage(value);
-  };
-
   const navigateToSettings = () => {
     navigate("/settings");
   };
 
   // Determine the current page of notifications to display
-  const currentNotifications = filteredNotifications.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
+  const currentNotifications = getCurrentPageItems(filteredNotifications);
 
   // Get notification icon based on type
   const getNotificationIcon = (type: string) => {
