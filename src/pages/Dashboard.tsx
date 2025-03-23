@@ -28,6 +28,8 @@ import {
 import * as dashboardService from "../services/dashboardService";
 import { DashboardStats } from "../services/dashboardService";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
 
 const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -290,6 +292,22 @@ const Dashboard: React.FC = () => {
             </Card>
           </Grid>
         )}
+
+        {/* Quick Actions */}
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6">Quick Actions</Typography>
+              <Button
+                component={Link}
+                to="/medical-records/add"
+                startIcon={<AddIcon />}
+              >
+                New Medical Record
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
     </div>
   );

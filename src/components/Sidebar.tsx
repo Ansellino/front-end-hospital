@@ -12,6 +12,7 @@ import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   LocalHospital as HospitalIcon,
+  MedicalServices as MedicalServicesIcon,
 } from "@mui/icons-material";
 
 interface SidebarProps {
@@ -126,6 +127,26 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
                   fontSize="small"
                 />
                 {!collapsed && <span>Staff</span>}
+              </NavLink>
+            </li>
+          )}
+
+          {hasPermission("view:medical-records") && (
+            <li>
+              <NavLink
+                to="/medical-records"
+                className={({ isActive }) =>
+                  `sidebar-item ${
+                    isActive ? "sidebar-item-active" : "sidebar-item-inactive"
+                  } ${collapsed ? "justify-center" : ""}`
+                }
+                title="Medical Records"
+              >
+                <MedicalServicesIcon
+                  className={collapsed ? "" : "mr-3"}
+                  fontSize="small"
+                />
+                {!collapsed && <span>Medical Records</span>}
               </NavLink>
             </li>
           )}

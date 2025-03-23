@@ -27,6 +27,9 @@ import BillingPage from "./pages/billing/BillingPages";
 import InvoiceForm from "./pages/billing/InvoiceForm";
 import InvoiceDetail from "./pages/billing/InvoiceDetail";
 import NotificationsPage from "./pages/notifications/NotificationsPage";
+import MedicalRecordList from "./pages/emr/MedicalRecordList";
+import MedicalRecordForm from "./pages/emr/MedicalRecordForm";
+import MedicalRecordPage from "./pages/emr/MedicalRecordPage";
 
 // Theme
 import { ThemeProvider } from "./contexts/ThemeContext"; // Import the new ThemeProvider
@@ -154,6 +157,39 @@ const App: React.FC = () => {
                   element={
                     <ProtectedRoute>
                       <NotificationsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                {/* EMR Routes */}
+                <Route
+                  path="/medical-records"
+                  element={
+                    <ProtectedRoute requiredPermission="view:medical-records">
+                      <MedicalRecordList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/medical-records/add"
+                  element={
+                    <ProtectedRoute requiredPermission="create:medical-records">
+                      <MedicalRecordForm />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/medical-records/:id"
+                  element={
+                    <ProtectedRoute requiredPermission="view:medical-records">
+                      <MedicalRecordPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/medical-records/edit/:id"
+                  element={
+                    <ProtectedRoute requiredPermission="edit:medical-records">
+                      <MedicalRecordForm />
                     </ProtectedRoute>
                   }
                 />

@@ -30,11 +30,16 @@ import {
   CalendarMonth,
   Receipt,
   LocalHospital,
+  Assignment as AssignmentIcon,
 } from "@mui/icons-material";
 import { format } from "date-fns";
 import { Patient } from "../../interfaces/patient";
 import * as patientService from "../../services/patientService";
+import MedicalRecordService from "../../services/medicalRecordService";
 import { useAuth } from "../../contexts/AuthContext";
+import VitalSigns from "../../components/emr/VitalSigns";
+import { VitalSigns as VitalSignsInterface } from "../../interfaces/emr";
+import PatientChart from "../../components/emr/PatientChart";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -67,6 +72,8 @@ const PatientDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tabValue, setTabValue] = useState(0);
+  const [latestVitalSigns, setLatestVitalSigns] =
+    useState<VitalSignsInterface | null>(null);
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -86,6 +93,27 @@ const PatientDetail: React.FC = () => {
     };
 
     fetchPatientData();
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      const fetchLatestVitalSigns = async () => {
+        try {
+          // Get latest medical record with vital signs
+          const records = await MedicalRecordService.getPatientMedicalRecords(
+            id
+          );
+          if (records && records.length > 0) {
+            // Assuming records are sorted by date, newest first
+            setLatestVitalSigns(records[0].vitalSigns);
+          }
+        } catch (err) {
+          console.error("Error fetching vital signs:", err);
+        }
+      };
+
+      fetchLatestVitalSigns();
+    }
   }, [id]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -555,6 +583,36 @@ const PatientDetail: React.FC = () => {
                   </Typography>
                 )}
               </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              {latestVitalSigns ? (
+                <VitalSigns
+                  initialValues={latestVitalSigns}
+                  readOnly={true}
+                  showCard={true}
+                  title="Latest Vital Signs"
+                />
+              ) : (
+                <Paper sx={{ p: 3 }}>
+                  <Typography variant="h6">Latest Vital Signs</Typography>
+                  <Divider sx={{ mb: 2 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    No vital signs data available
+                  </Typography>
+                </Paper>
+              )}
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                component={Link}
+                to={`/medical-records?patientId=${patient.id}`}
+                startIcon={<AssignmentIcon />}
+                sx={{ mb: 2 }}
+              >
+                View Medical Records
+              </Button>
+              <PatientChart patientId={patient.id} />
             </Grid>
           </Grid>
         </TabPanel>
