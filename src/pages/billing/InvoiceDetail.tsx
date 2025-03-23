@@ -93,10 +93,9 @@ const InvoiceDetail: React.FC = () => {
   }, [id]);
 
   // Handle print functionality
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-    documentTitle: `Invoice-${invoice?.id}`,
-  } as any);
+  const handlePrint = () => {
+    window.print();
+  };
 
   // Get status color
   const getStatusColor = (status: string) => {
@@ -309,10 +308,7 @@ const InvoiceDetail: React.FC = () => {
             <Button
               variant="outlined"
               startIcon={<PrintIcon />}
-              onClick={(e) => {
-                e.preventDefault();
-                handlePrint();
-              }}
+              onClick={handlePrint}
             >
               Print
             </Button>
