@@ -1,184 +1,547 @@
-# Getting Started with Create React App
+# Healthcare Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A comprehensive hospital and healthcare management application built with React and TypeScript. This system provides a unified platform for managing patients, doctors, appointments, medical records, prescriptions, and more. The application streamlines healthcare operations and improves patient care through integrated digital solutions.
 
-## Available Scripts
+![Healthcare Management System](https://via.placeholder.com/1200x600?text=Healthcare+Management+System)
 
-In the project directory, you can run:
+## Table of Contents
 
-### `npm start`
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Tech Stack](#tech-stack)
+- [System Requirements](#system-requirements)
+- [Installation and Setup](#installation-and-setup)
+- [Project Structure](#project-structure)
+- [Data Model](#data-model)
+- [API Integration](#api-integration)
+- [Key Components](#key-components)
+- [State Management](#state-management)
+- [Authentication and Authorization](#authentication-and-authorization)
+- [Available Scripts](#available-scripts)
+- [Development Guidelines](#development-guidelines)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Features
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+The system provides comprehensive functionality covering all aspects of healthcare management:
 
-### `npm test`
+### Patient Management
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Patient Registration**: Complete patient onboarding with personal and insurance information
+- **Patient Records**: Comprehensive profiles with demographic data, contact details, and medical history
+- **Patient Portal**: Access to personal medical records, appointments, and billing information
 
-### `npm run build`
+### Doctor & Staff Management
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Staff Profiles**: Comprehensive doctor and staff profiles with credentials and specializations
+- **Scheduling**: Easy management of doctor availability and working hours
+- **Performance Tracking**: Monitor doctor productivity and patient satisfaction
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Appointment System
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Scheduling**: Create, reschedule, and cancel appointments with real-time availability
+- **Calendar Views**: Daily, weekly, and monthly calendar views for staff
+- **Reminders**: Automated appointment notifications for patients and staff
 
-### `npm run eject`
+### Electronic Medical Records (EMR)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- **Patient Charts**: Complete patient medical history in a unified view
+- **Visit Documentation**: SOAP notes and comprehensive visit documentation
+- **Vital Signs Tracking**: Record and monitor patient vital signs over time
+- **Diagnosis Coding**: ICD-10 coding support for accurate diagnosis recording
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Prescription Management
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- **E-Prescribing**: Digital prescription creation and management
+- **Medication History**: Track patient medication history
+- **Drug Interaction Checking**: Alerts for potential drug interactions
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Laboratory Management
 
-## Learn More
+- **Test Ordering**: Request lab tests and track results
+- **Results Viewing**: Visualize test results with trend analysis
+- **Critical Value Alerts**: Notifications for abnormal results
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Billing & Payments
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **Invoice Generation**: Create and manage patient invoices
+- **Payment Processing**: Record and track payments
+- **Insurance Management**: Handle insurance claims and verification
+
+### Reporting & Analytics
+
+- **Operational Reports**: Generate reports on appointments, patient visits, etc.
+- **Clinical Dashboards**: Visual representation of key health metrics
+- **Financial Analytics**: Track revenue, outstanding payments, and financial trends
+
+### System Management
+
+- **User Administration**: User role management with proper access controls
+- **Audit Logs**: Track system access and changes for security and compliance
+- **Settings Configuration**: Customize system parameters to match facility needs
+
+## Screenshots
+
+### Dashboard
+
+![Dashboard](https://via.placeholder.com/800x400?text=Dashboard)
+
+### Patient Records
+
+![Patient Records](https://via.placeholder.com/800x400?text=Patient+Records)
+
+### Appointment Calendar
+
+![Appointment Calendar](https://via.placeholder.com/800x400?text=Appointment+Calendar)
+
+### Medical Records
+
+![Medical Records](https://via.placeholder.com/800x400?text=Medical+Records)
+
+## Tech Stack
+
+### Frontend Core
+
+- **Framework**: React 19.0.0 with TypeScript
+- **State Management**: React Context API for application state
+- **Routing**: React Router DOM 7.3.0
+- **UI Library**: Material UI (MUI) v6.4.8 with Icons
+- **Form Management**: Formik 2.4.6 with Yup 1.6.1 for validation
+- **Date Handling**: date-fns 4.1.0
+- **HTTP Client**: Axios 1.8.3
+
+### Data Visualization
+
+- **Charts**: Recharts 2.15.1
+- **Data Grids**: MUI Data Grid
+
+### Styling & Design
+
+- **CSS Framework**: Tailwind CSS 3.4.17
+- **Theme System**: Custom theming with MUI ThemeProvider
+- **Responsive Design**: Mobile-first approach with responsive components
+
+### Build Tools
+
+- **Package Manager**: npm
+- **Bundler**: Create React App (Webpack underneath)
+- **Transpiler**: Babel (via Create React App)
+- **Testing**: Jest and React Testing Library
+
+### Backend Integration
+
+- **API Communication**: RESTful API integration
+- **Authentication**: JWT-based authentication
+- **Real-time Features**: WebSocket for notifications (if applicable)
+
+## System Requirements
+
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
+- **Memory**: Minimum 4GB RAM recommended
+- **Storage**: 1GB of free disk space for development
+- **Browsers**: Chrome, Firefox, Safari, Edge (latest versions)
+
+## Installation and Setup
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/yourusername/healthcare-management.git
+   cd healthcare-management
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+
+   - Create a `.env` file in the root directory
+   - Add the following variables:
+     ```
+     REACT_APP_API_URL=http://localhost:8000/api
+     REACT_APP_VERSION=1.0.0
+     ```
+
+4. **Start the development server**
+
+   ```bash
+   npm start
+   ```
+
+   The application will be available at http://localhost:3000
+
+5. **For production build**
+   ```bash
+   npm run build
+   ```
+   The build output will be in the `build` folder
+
+## Project Structure
 
 ```bash
 /src
-├── assets/ # Static assets (images, icons)
-├── components/ # Reusable UI components
-├── contexts/ # React contexts for state management
-├── hooks/ # Custom React hooks
-├── interfaces/ # TypeScript interfaces/types
-├── layouts/ # Layout components
-├── pages/ # Page components
-├── services/ # API service functions
-├── utils/ # Utility functions
-└── App.tsx # Root component
+├── assets/              # Static assets (images, icons, fonts)
+│   ├── images/          # Image files
+│   └── icons/           # Icon files
+│
+├── components/          # Reusable UI components
+│   ├── common/          # General-purpose components
+│   ├── dashboard/       # Dashboard-specific components
+│   ├── emr/             # Electronic Medical Record components
+│   ├── layout/          # Layout components
+│   ├── patients/        # Patient-related components
+│   ├── appointments/    # Appointment-related components
+│   └── staff/           # Staff-related components
+│
+├── contexts/            # React contexts for state management
+│   ├── AuthContext.tsx  # Authentication context
+│   └── ...
+│
+├── hooks/               # Custom React hooks
+│   ├── useAuth.ts       # Authentication hook
+│   └── ...
+│
+├── interfaces/          # TypeScript interfaces/types
+│   ├── patient.ts       # Patient-related types
+│   ├── emr.ts           # EMR-related types
+│   └── ...
+│
+├── layouts/             # Layout components
+│   ├── MainLayout.tsx   # Main application layout
+│   └── ...
+│
+├── pages/               # Page components
+│   ├── Dashboard.tsx    # Dashboard page
+│   ├── Login.tsx        # Login page
+│   ├── patients/        # Patient-related pages
+│   ├── appointments/    # Appointment-related pages
+│   ├── emr/             # EMR-related pages
+│   ├── staff/           # Staff-related pages
+│   └── ...
+│
+├── services/            # API service functions
+│   ├── api.ts           # Base API configuration
+│   ├── patientService.ts # Patient-related API calls
+│   ├── medicalRecordService.ts # Medical records API calls
+│   └── ...
+│
+├── utils/               # Utility functions
+│   ├── dateUtils.ts     # Date manipulation utilities
+│   ├── formatters.ts    # Data formatting utilities
+│   └── ...
+│
+├── theme/               # Theme configuration
+│   └── index.ts         # MUI theme setup
+│
+├── App.tsx              # Root component
+├── index.tsx            # Application entry point
+├── index.css            # Global styles
+└── react-app-env.d.ts   # Type declarations
 ```
 
-Entity Relationship Diagram
+## Data Model
 
-1. Patient Relationships
+The system is built around the following entities and their relationships:
 
-PATIENT ||--o{ APPOINTMENT : "makes"
+### Patient-Centered Relationships
 
-One patient can make many appointments (one-to-many)
-This allows patients to schedule multiple visits with doctors
-Each appointment record contains a reference to the patient who scheduled it
+- **Patient to Appointments**: One patient can make multiple appointments
+- **Patient to Medical Records**: One patient can have multiple medical records
+- **Patient to Inpatient Care**: One patient can have multiple hospital stays
+- **Patient to Payments**: One patient can make multiple payments
+- **Patient to Laboratory Tests**: One patient can undergo multiple lab tests
+- **Patient to Notifications**: One patient can receive multiple notifications
 
-PATIENT ||--o{ MEDICAL_RECORD : "has"
+### Doctor-Centered Relationships
 
-One patient can have many medical records (one-to-many)
-Each visit or treatment results in a new medical record entry
-The patient's entire medical history is captured through these multiple records
+- **Doctor to Appointments**: One doctor can have multiple appointments
+- **Doctor to Medical Records**: One doctor can create multiple medical records
+- **Doctor to Inpatient Care**: One doctor can manage multiple inpatient cases
+- **Doctor to Laboratory Tests**: One doctor can request multiple lab tests
+- **Doctor to Notifications**: One doctor can receive multiple notifications
 
-PATIENT ||--o{ INPATIENT_CARE : "undergoes"
+### Medical Record Relationships
 
-One patient can have multiple inpatient care stays (one-to-many)
-Each hospitalization creates a new inpatient care record
-This tracks different hospital admissions over time
+- **Medical Record to Prescriptions**: One medical record can include multiple prescriptions
+- **Medical Record to Payments**: One medical record can link to multiple payments
+- **Medical Record to Notifications**: Updates to records can trigger multiple notifications
 
-PATIENT ||--o{ PAYMENT : "makes"
+### Other Key Relationships
 
-One patient can make many payments (one-to-many)
-Payments can be for different services (appointments, treatments, etc.)
-This relationship tracks all financial transactions by a patient
+- **Medicine to Prescriptions**: One medicine can be prescribed multiple times
+- **Inpatient Care to Payments**: One hospital stay can generate multiple payments
+- **Appointments to Notifications**: One appointment can trigger multiple notifications
+- **Payments to Notifications**: One payment can trigger multiple notifications
 
-PATIENT ||--o{ LABORATORY : "undergoes"
+## API Integration
 
-One patient can undergo many laboratory tests (one-to-many)
-Each test is recorded as a separate laboratory record
-This allows tracking of all diagnostic tests for a patient
+The frontend connects to a backend API for data operations. API services are organized in the `services` directory.
 
-PATIENT ||--o{ NOTIFICATION : "receives"
+### API Configuration
 
-One patient can receive many notifications (one-to-many)
-Patients receive notifications about appointments, test results, payments, etc.
-This enables personalized communication with patients
+```typescript
+// Base API configuration with Axios
+import axios from "axios";
 
-2. Doctor Relationships
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-DOCTOR ||--o{ APPOINTMENT : "receives"
+// Request interceptor for adding auth token
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-One doctor can receive many appointments (one-to-many)
-This tracks all patient visits scheduled with a specific doctor
-Helps manage doctor scheduling and availability
+// Response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle 401 Unauthorized errors
+    if (error.response && error.response.status === 401) {
+      // Redirect to login or refresh token
+    }
+    return Promise.reject(error);
+  }
+);
 
-DOCTOR ||--o{ MEDICAL_RECORD : "creates"
+export default api;
+```
 
-One doctor can create many medical records (one-to-many)
-Doctors document patient visits and treatments in medical records
-This attributes medical records to the doctor who provided care
+### Example Service
 
-DOCTOR ||--o{ INPATIENT_CARE : "manages"
+```typescript
+// Patient service example
+import api from "./api";
+import { Patient } from "../interfaces/patient";
 
-One doctor can manage many inpatient care cases (one-to-many)
-Doctors are assigned as the primary physician for hospitalized patients
-This tracks doctor responsibility for inpatient treatment
+export const getPatients = async (): Promise<Patient[]> => {
+  try {
+    const response = await api.get("/patients");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching patients:", error);
+    throw error;
+  }
+};
 
-DOCTOR ||--o{ LABORATORY : "requests"
+export const getPatientById = async (id: string): Promise<Patient> => {
+  try {
+    const response = await api.get(`/patients/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching patient ${id}:`, error);
+    throw error;
+  }
+};
 
-One doctor can request many laboratory tests (one-to-many)
-Doctors order diagnostic tests for their patients
-This associates lab tests with the ordering physician
+// More patient-related API calls...
+```
 
-DOCTOR ||--o{ NOTIFICATION : "receives"
+## Key Components
 
-One doctor can receive many notifications (one-to-many)
-Doctors get alerts about appointments, test results, patient status, etc.
-This improves care coordination and doctor responsiveness
+### Electronic Medical Records (EMR)
 
-3. Medical Record Relationships
+The EMR module includes several sophisticated components:
 
-MEDICAL_RECORD ||--o{ PRESCRIPTION : "includes"
+1. **PatientChart**: Comprehensive view of patient's medical history
+2. **MedicalRecordForm**: Form for creating and editing medical records
+3. **VitalSigns**: Component for recording and displaying vital signs
+4. **DiagnosisForm**: Interface for adding diagnoses with ICD-10 codes
+5. **PrescriptionWriter**: Component for writing and managing prescriptions
+6. **VisitNotes**: SOAP notes documentation system
 
-One medical record can include many prescriptions (one-to-many)
-A doctor may prescribe multiple medications during a single visit
-This links prescribed medicines to the specific visit/treatment
+Example Component:
 
-MEDICAL_RECORD ||--o{ PAYMENT : "related to"
+```tsx
+// VitalSigns component usage
+<VitalSigns
+  initialValues={patient.vitalSigns}
+  onChange={handleVitalSignsChange}
+  onSave={saveVitalSigns}
+  readOnly={!hasPermission("edit:vital-signs")}
+/>
+```
 
-One medical record can be related to many payments (one-to-many)
-A single visit might require multiple payments or installments
-This links financial transactions to specific medical services
+## State Management
 
-MEDICAL_RECORD ||--o{ NOTIFICATION : "triggers"
+The application uses React's Context API for state management. Key contexts include:
 
-One medical record can trigger many notifications (one-to-many)
-Updates to medical records can generate alerts to patients and doctors
-This ensures timely communication about medical findings
+1. **AuthContext**: Manages user authentication and permissions
+2. **UIContext**: Manages UI state like theme and layout
+3. **NotificationContext**: Manages application notifications and alerts
 
-4. Other Entity Relationships
+Example Context Usage:
 
-MEDICINE ||--o{ PRESCRIPTION : "included in"
+```tsx
+// Using authentication context
+import { useAuth } from "../contexts/AuthContext";
 
-One medicine can be included in many prescriptions (one-to-many)
-The same medication may be prescribed to different patients
-This tracks usage of specific medications across prescriptions
+const MyComponent = () => {
+  const { currentUser, hasPermission, logout } = useAuth();
 
-INPATIENT_CARE ||--o{ PAYMENT : "related to"
+  if (!hasPermission("view:patients")) {
+    return <AccessDenied />;
+  }
 
-One inpatient care stay can be related to many payments (one-to-many)
-Hospital stays often involve multiple charges and payments
-This links financial transactions to specific hospitalization periods
+  return (
+    <div>
+      <p>Welcome, {currentUser.name}</p>
+      <button onClick={logout}>Logout</button>
+    </div>
+  );
+};
+```
 
-APPOINTMENT ||--o{ NOTIFICATION : "triggers"
+## Authentication and Authorization
 
-One appointment can trigger many notifications (one-to-many)
-Notifications may include confirmations, reminders, and follow-ups
-This enables automated communication about scheduled visits
+The system implements a role-based access control system with the following roles:
 
-PAYMENT ||--o{ NOTIFICATION : "triggers"
+1. **Administrator**: Full system access
+2. **Doctor**: Access to patients, appointments, medical records
+3. **Nurse**: Limited access to patients and medical records
+4. **Receptionist**: Access to appointments and patient registration
+5. **Billing Staff**: Access to invoices and payments
 
-One payment can trigger many notifications (one-to-many)
-Notifications may include receipts, payment confirmations, and reminders
-This keeps patients informed about their financial obligations
+Permissions are checked using the `hasPermission` utility:
 
-5. Relationship Types
+```tsx
+// Permission check example
+if (hasPermission("edit:medical-records")) {
+  // Show edit button
+}
+```
 
-All relationships in this ERD are one-to-many relationships (||--o{)
-This means that one entity instance can be associated with multiple instances of the related entity
-For example, one patient can have many appointments, but each appointment belongs to only one patient
+## Available Scripts
+
+- `npm start` - Run the development server
+- `npm test` - Run tests
+- `npm run build` - Build for production
+- `npm run eject` - Eject from Create React App (one-way operation)
+- `npm run lint` - Run ESLint to check code quality
+- `npm run format` - Run Prettier to format code
+
+## Development Guidelines
+
+### Coding Standards
+
+- Follow TypeScript best practices
+- Use functional components with hooks
+- Maintain proper component organization
+- Document code with JSDoc comments
+
+### Git Workflow
+
+1. Create a feature branch from `develop`
+2. Make changes and commit with meaningful messages
+3. Push to origin and create a pull request
+4. Wait for code review and approval
+5. Merge to develop branch
+
+### Performance Considerations
+
+- Use React.memo for expensive components
+- Implement virtualization for long lists
+- Optimize bundle size with code splitting
+- Use lazy loading for routes
+
+## Testing
+
+The project uses Jest and React Testing Library for testing.
+
+### Unit Tests
+
+Unit tests focus on testing individual components and functions in isolation.
+
+```bash
+# Run all tests
+npm test
+
+# Run specific test file
+npm test -- src/components/patients/PatientList.test.tsx
+
+# Run tests with coverage report
+npm test -- --coverage
+```
+
+### End-to-End Tests
+
+End-to-end testing is performed using Cypress.
+
+```bash
+# Open Cypress test runner
+npm run cypress:open
+
+# Run Cypress tests headlessly
+npm run cypress:run
+```
+
+## Deployment
+
+### Development Environment
+
+```bash
+# Build for development
+npm run build:dev
+```
+
+### Staging Environment
+
+```bash
+# Build for staging
+npm run build:staging
+```
+
+### Production Environment
+
+```bash
+# Build for production
+npm run build
+```
+
+### Deployment Platforms
+
+The application can be deployed to:
+
+- AWS S3 + CloudFront
+- Netlify
+- Vercel
+- Firebase Hosting
+
+## Contributing
+
+We welcome contributions to improve the Healthcare Management System!
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please ensure your code follows our coding standards and includes appropriate tests.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contact
+
+For questions or support, please contact:
+
+- Email: support@healthcare-management.com
+- Website: https://healthcare-management.com
