@@ -31,6 +31,8 @@ import {
   Receipt,
   LocalHospital,
   Assignment as AssignmentIcon,
+  Event as EventIcon, // Add this import
+  Add as AddIcon, // Add this import
 } from "@mui/icons-material";
 import { format } from "date-fns";
 import { Patient } from "../../interfaces/patient";
@@ -61,6 +63,14 @@ function TabPanel(props: TabPanelProps) {
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
+}
+
+// Add this function to fix the error
+function a11yProps(index: number) {
+  return {
+    id: `patient-tab-${index}`,
+    "aria-controls": `patient-tabpanel-${index}`,
+  };
 }
 
 const PatientDetail: React.FC = () => {
@@ -182,49 +192,58 @@ const PatientDetail: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* Header section */}
-      <Box
-        sx={{
-          mb: 4,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+    <div className="px-4 sm:px-6 py-4 sm:py-6 max-w-[1200px] mx-auto">
+      {/* Header with back button and actions */}
+      <div className="flex flex-col items-start justify-between gap-3 mb-4 sm:flex-row sm:items-center">
+        <div className="flex items-center">
           <IconButton
             onClick={() => navigate("/patients")}
-            sx={{ mr: 2 }}
+            className="mr-2 -ml-2"
             aria-label="back"
           >
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h4" component="h1">
+          <Typography
+            variant="h4"
+            component="h1"
+            className="text-xl font-medium sm:text-2xl md:text-3xl"
+          >
             Patient Details
           </Typography>
-        </Box>
+        </div>
 
-        {hasPermission("edit:patients") && (
-          <Button
-            variant="contained"
-            startIcon={<EditIcon />}
-            onClick={() => navigate(`/patients/${id}/edit`)}
-          >
-            Edit Patient
-          </Button>
-        )}
-      </Box>
+        <div className="flex flex-wrap w-full gap-2 sm:w-auto">
+          {hasPermission("create:appointments") && (
+            <Button
+              variant="outlined"
+              startIcon={<EventIcon />}
+              onClick={() => navigate(`/appointments/new?patientId=${id}`)}
+              className="flex-grow sm:flex-grow-0"
+            >
+              Schedule
+            </Button>
+          )}
+          {hasPermission("edit:patients") && (
+            <Button
+              variant="contained"
+              startIcon={<EditIcon />}
+              onClick={() => navigate(`/patients/${id}/edit`)}
+              className="flex-grow sm:flex-grow-0"
+            >
+              Edit
+            </Button>
+          )}
+        </div>
+      </div>
 
       {/* Patient summary card */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
+      <Card className="mb-4 overflow-hidden transition-shadow duration-200 shadow-sm hover:shadow-md">
+        <CardContent className="p-4 sm:p-6">
           <Grid container spacing={2} alignItems="center">
-            <Grid item>
+            <Grid item xs={12} sm={1}>
               <Avatar
+                className="w-16 h-16 mx-auto sm:w-20 sm:h-20 sm:mx-0"
                 sx={{
-                  width: 80,
-                  height: 80,
                   bgcolor:
                     patient.gender === "male"
                       ? "primary.main"
@@ -235,11 +254,18 @@ const PatientDetail: React.FC = () => {
                 {patient.lastName[0]}
               </Avatar>
             </Grid>
-            <Grid item xs={12} sm>
-              <Typography variant="h5">
+
+            <Grid
+              item
+              xs={12}
+              sm={8}
+              className="mt-2 text-center sm:text-left sm:mt-0"
+            >
+              <Typography variant="h5" className="text-xl sm:text-2xl">
                 {patient.firstName} {patient.lastName}
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
+
+              <div className="flex flex-wrap justify-center gap-1 mt-2 sm:justify-start">
                 <Chip
                   size="small"
                   label={`${calculateAge(patient.dateOfBirth)} years`}
@@ -251,13 +277,7 @@ const PatientDetail: React.FC = () => {
                     patient.gender.charAt(0).toUpperCase() +
                     patient.gender.slice(1)
                   }
-                  color={
-                    patient.gender === "male"
-                      ? "primary"
-                      : patient.gender === "female"
-                      ? "secondary"
-                      : "default"
-                  }
+                  color={patient.gender === "male" ? "primary" : "secondary"}
                   variant="outlined"
                 />
                 <Chip
@@ -265,32 +285,45 @@ const PatientDetail: React.FC = () => {
                   label={`ID: ${patient.id}`}
                   variant="outlined"
                 />
-              </Box>
+              </div>
+
+              <div className="mt-2 space-y-1 text-center sm:text-left">
+                <Typography variant="body2">
+                  <span className="font-medium text-gray-600 dark:text-gray-400">
+                    Email:
+                  </span>{" "}
+                  {patient.email}
+                </Typography>
+                <Typography variant="body2">
+                  <span className="font-medium text-gray-600 dark:text-gray-400">
+                    Phone:
+                  </span>{" "}
+                  {patient.contactNumber}
+                </Typography>
+              </div>
             </Grid>
-            <Grid item xs={12} sm="auto">
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: { xs: "flex-start", sm: "flex-end" },
-                }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  Patient since:{" "}
-                  {format(new Date(patient.createdAt), "MMM d, yyyy")}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Last updated:{" "}
-                  {format(new Date(patient.updatedAt), "MMM d, yyyy")}
-                </Typography>
-              </Box>
+
+            <Grid
+              item
+              xs={12}
+              sm={3}
+              className="mt-2 text-center sm:text-right sm:mt-0"
+            >
+              <Typography variant="body2" color="textSecondary">
+                Patient since:{" "}
+                {format(new Date(patient.createdAt), "MMM d, yyyy")}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Last updated:{" "}
+                {format(new Date(patient.updatedAt), "MMM d, yyyy")}
+              </Typography>
             </Grid>
           </Grid>
         </CardContent>
       </Card>
 
-      {/* Tabs for different sections */}
-      <Box sx={{ width: "100%" }}>
+      {/* Tabs section */}
+      <Box className="w-full">
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
             value={tabValue}
@@ -302,409 +335,382 @@ const PatientDetail: React.FC = () => {
             <Tab
               icon={<Person />}
               iconPosition="start"
-              label="Personal Information"
+              label="Overview"
+              className="min-w-0 px-2 sm:px-3"
+              {...a11yProps(0)}
             />
             <Tab
               icon={<MedicalServices />}
               iconPosition="start"
-              label="Medical History"
-            />
-            <Tab
-              icon={<LocalHospital />}
-              iconPosition="start"
-              label="Insurance"
+              label="Medical Records"
+              className="min-w-0 px-2 sm:px-3"
+              {...a11yProps(1)}
             />
             <Tab
               icon={<CalendarMonth />}
               iconPosition="start"
               label="Appointments"
+              className="min-w-0 px-2 sm:px-3"
+              {...a11yProps(2)}
             />
-            <Tab icon={<Receipt />} iconPosition="start" label="Billing" />
+            <Tab
+              icon={<AssignmentIcon />}
+              iconPosition="start"
+              label="Insurance"
+              className="min-w-0 px-2 sm:px-3"
+              {...a11yProps(3)}
+            />
+            <Tab
+              icon={<Receipt />}
+              iconPosition="start"
+              label="Billing"
+              className="min-w-0 px-2 sm:px-3"
+              {...a11yProps(4)}
+            />
           </Tabs>
         </Box>
 
-        {/* Personal Information Tab */}
+        {/* Overview Tab */}
         <TabPanel value={tabValue} index={0}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Contact Information
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-                <List disablePadding>
-                  <ListItem>
-                    <ListItemText primary="Email" secondary={patient.email} />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Phone"
-                      secondary={patient.contactNumber}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Date of Birth"
-                      secondary={format(
-                        new Date(patient.dateOfBirth),
-                        "MMMM d, yyyy"
-                      )}
-                    />
-                  </ListItem>
-                </List>
-              </Paper>
+              <Card className="h-full">
+                <CardContent className="p-4">
+                  <Typography variant="h6" className="mb-3">
+                    Personal Information
+                  </Typography>
+                  <Divider className="mb-4" />
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <Typography
+                        variant="subtitle2"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
+                        Date of Birth
+                      </Typography>
+                      <Typography variant="body1">
+                        {format(new Date(patient.dateOfBirth), "MMMM d, yyyy")}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <Typography
+                        variant="subtitle2"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
+                        Gender
+                      </Typography>
+                      <Typography variant="body1" className="capitalize">
+                        {patient.gender}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="subtitle2"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
+                        Address
+                      </Typography>
+                      <Typography variant="body1">
+                        {patient.address.street}
+                      </Typography>
+                      <Typography variant="body1">
+                        {patient.address.city}, {patient.address.state}{" "}
+                        {patient.address.zipCode}
+                      </Typography>
+                      <Typography variant="body1">
+                        {patient.address.country}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Address
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-                <List disablePadding>
-                  <ListItem>
-                    <ListItemText
-                      primary="Street"
-                      secondary={patient.address.street}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="City"
-                      secondary={patient.address.city}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="State"
-                      secondary={patient.address.state}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Zip Code"
-                      secondary={patient.address.zipCode}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Country"
-                      secondary={patient.address.country}
-                    />
-                  </ListItem>
-                </List>
-              </Paper>
+              <Card className="h-full">
+                <CardContent className="p-4">
+                  <Typography variant="h6" className="mb-3">
+                    Emergency Contact
+                  </Typography>
+                  <Divider className="mb-4" />
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="subtitle2"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
+                        Name
+                      </Typography>
+                      <Typography variant="body1">
+                        {patient.emergencyContact.name}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <Typography
+                        variant="subtitle2"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
+                        Relationship
+                      </Typography>
+                      <Typography variant="body1">
+                        {patient.emergencyContact.relationship}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <Typography
+                        variant="subtitle2"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
+                        Phone
+                      </Typography>
+                      <Typography variant="body1">
+                        {patient.emergencyContact.contactNumber}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
             </Grid>
 
-            <Grid item xs={12}>
-              <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Emergency Contact
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-                <List disablePadding>
-                  <ListItem>
-                    <ListItemText
-                      primary="Name"
-                      secondary={patient.emergencyContact.name}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Relationship"
-                      secondary={patient.emergencyContact.relationship}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Phone"
-                      secondary={patient.emergencyContact.contactNumber}
-                    />
-                  </ListItem>
-                </List>
-              </Paper>
+            <Grid item xs={12} md={6}>
+              <Card className="h-full">
+                <CardContent className="p-4">
+                  <Typography variant="h6" className="mb-3">
+                    Insurance Information
+                  </Typography>
+                  <Divider className="mb-4" />
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="subtitle2"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
+                        Provider
+                      </Typography>
+                      <Typography variant="body1">
+                        {patient.insuranceInfo.provider}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <Typography
+                        variant="subtitle2"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
+                        Policy Number
+                      </Typography>
+                      <Typography variant="body1">
+                        {patient.insuranceInfo.policyNumber}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <Typography
+                        variant="subtitle2"
+                        className="text-gray-600 dark:text-gray-400"
+                      >
+                        Group Number
+                      </Typography>
+                      <Typography variant="body1">
+                        {patient.insuranceInfo.groupNumber}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
         </TabPanel>
 
-        {/* Medical History Tab */}
+        {/* Medical Records Tab */}
         <TabPanel value={tabValue} index={1}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Allergies
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-                {patient.medicalHistory.allergies.length > 0 ? (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                    {patient.medicalHistory.allergies.map((allergy, index) => (
-                      <Chip key={index} label={allergy} />
-                    ))}
-                  </Box>
-                ) : (
-                  <Typography variant="body2" color="text.secondary">
-                    No known allergies
-                  </Typography>
-                )}
-              </Paper>
-            </Grid>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex flex-col items-start justify-between gap-3 mb-4 sm:flex-row sm:items-center">
+                <Typography variant="h6">Medical History</Typography>
 
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Chronic Conditions
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-                {patient.medicalHistory.chronicConditions.length > 0 ? (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                    {patient.medicalHistory.chronicConditions.map(
-                      (condition, index) => (
-                        <Chip key={index} label={condition} />
-                      )
-                    )}
-                  </Box>
-                ) : (
-                  <Typography variant="body2" color="text.secondary">
-                    No chronic conditions
-                  </Typography>
+                {hasPermission("create:medical-records") && (
+                  <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={() =>
+                      navigate(`/medical-records/add?patientId=${id}`)
+                    }
+                    className="w-full sm:w-auto"
+                  >
+                    Add Medical Record
+                  </Button>
                 )}
-              </Paper>
-            </Grid>
+              </div>
 
-            <Grid item xs={12}>
-              <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Current Medications
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-                {patient.medicalHistory.medications.length > 0 ? (
-                  <Box sx={{ overflowX: "auto" }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={3}>
-                        <Typography variant="subtitle2">Name</Typography>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Typography variant="subtitle2">Dosage</Typography>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Typography variant="subtitle2">Frequency</Typography>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Typography variant="subtitle2">Start Date</Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Divider />
-                      </Grid>
-                    </Grid>
-                    {patient.medicalHistory.medications.map(
-                      (medication, index) => (
-                        <Grid container spacing={2} key={index} sx={{ mt: 1 }}>
-                          <Grid item xs={3}>
-                            <Typography variant="body2">
-                              {medication.name}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={3}>
-                            <Typography variant="body2">
-                              {medication.dosage}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={3}>
-                            <Typography variant="body2">
-                              {medication.frequency}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={3}>
-                            <Typography variant="body2">
-                              {format(
-                                new Date(medication.startDate),
-                                "MMM d, yyyy"
-                              )}
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      )
-                    )}
-                  </Box>
-                ) : (
-                  <Typography variant="body2" color="text.secondary">
-                    No current medications
-                  </Typography>
-                )}
-              </Paper>
-            </Grid>
+              <Divider className="mb-4" />
 
-            <Grid item xs={12}>
-              <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Previous Surgeries
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
-                {patient.medicalHistory.surgeries.length > 0 ? (
-                  <Box sx={{ overflowX: "auto" }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={4}>
-                        <Typography variant="subtitle2">Procedure</Typography>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Typography variant="subtitle2">Date</Typography>
-                      </Grid>
-                      <Grid item xs={5}>
-                        <Typography variant="subtitle2">Notes</Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Divider />
-                      </Grid>
-                    </Grid>
-                    {patient.medicalHistory.surgeries.map((surgery, index) => (
-                      <Grid container spacing={2} key={index} sx={{ mt: 1 }}>
-                        <Grid item xs={4}>
-                          <Typography variant="body2">
-                            {surgery.procedure}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={3}>
-                          <Typography variant="body2">
-                            {format(new Date(surgery.date), "MMM d, yyyy")}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={5}>
-                          <Typography variant="body2">
-                            {surgery.notes}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    ))}
-                  </Box>
-                ) : (
-                  <Typography variant="body2" color="text.secondary">
-                    No previous surgeries
-                  </Typography>
-                )}
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              {latestVitalSigns ? (
-                <VitalSigns
-                  initialValues={latestVitalSigns}
-                  readOnly={true}
-                  showCard={true}
-                  title="Latest Vital Signs"
-                />
-              ) : (
-                <Paper sx={{ p: 3 }}>
-                  <Typography variant="h6">Latest Vital Signs</Typography>
-                  <Divider sx={{ mb: 2 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    No vital signs data available
-                  </Typography>
-                </Paper>
+              {patient.medicalHistory && (
+                <div className="space-y-4">
+                  <div>
+                    <Typography
+                      variant="subtitle1"
+                      className="mb-2 font-medium"
+                    >
+                      Allergies
+                    </Typography>
+                    <div className="flex flex-wrap gap-1">
+                      {patient.medicalHistory.allergies.length > 0 ? (
+                        patient.medicalHistory.allergies.map(
+                          (allergy, index) => (
+                            <Chip key={index} label={allergy} size="small" />
+                          )
+                        )
+                      ) : (
+                        <Typography variant="body2" color="textSecondary">
+                          No known allergies
+                        </Typography>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Typography
+                      variant="subtitle1"
+                      className="mb-2 font-medium"
+                    >
+                      Chronic Conditions
+                    </Typography>
+                    <div className="flex flex-wrap gap-1">
+                      {patient.medicalHistory.chronicConditions.length > 0 ? (
+                        patient.medicalHistory.chronicConditions.map(
+                          (condition, index) => (
+                            <Chip key={index} label={condition} size="small" />
+                          )
+                        )
+                      ) : (
+                        <Typography variant="body2" color="textSecondary">
+                          No chronic conditions
+                        </Typography>
+                      )}
+                    </div>
+                  </div>
+                </div>
               )}
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                component={Link}
-                to={`/medical-records?patientId=${patient.id}`}
-                startIcon={<AssignmentIcon />}
-                sx={{ mb: 2 }}
-              >
-                View Medical Records
-              </Button>
-              <PatientChart patientId={patient.id} />
-            </Grid>
-          </Grid>
+            </CardContent>
+          </Card>
+        </TabPanel>
+
+        {/* Appointments Tab */}
+        <TabPanel value={tabValue} index={2}>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex flex-col items-start justify-between gap-3 mb-4 sm:flex-row sm:items-center">
+                <Typography variant="h6">Appointments</Typography>
+
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() =>
+                    navigate("/appointments/new", {
+                      state: { patientId: patient.id },
+                    })
+                  }
+                  className="w-full sm:w-auto"
+                >
+                  Schedule New Appointment
+                </Button>
+              </div>
+
+              <Divider className="mb-4" />
+
+              <Typography variant="body1" className="py-4 text-center">
+                Appointment history will be displayed here.
+              </Typography>
+            </CardContent>
+          </Card>
         </TabPanel>
 
         {/* Insurance Tab */}
-        <TabPanel value={tabValue} index={2}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Insurance Information
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <List disablePadding>
-                  <ListItem>
-                    <ListItemText
-                      primary="Insurance Provider"
-                      secondary={patient.insuranceInfo.provider}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Policy Number"
-                      secondary={patient.insuranceInfo.policyNumber}
-                    />
-                  </ListItem>
-                </List>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <List disablePadding>
-                  <ListItem>
-                    <ListItemText
-                      primary="Group Number"
-                      secondary={patient.insuranceInfo.groupNumber}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary="Valid Until"
-                      secondary={format(
-                        new Date(patient.insuranceInfo.validUntil),
-                        "MMMM d, yyyy"
-                      )}
-                    />
-                  </ListItem>
-                </List>
-              </Grid>
-            </Grid>
-          </Paper>
-        </TabPanel>
-
-        {/* Appointments Tab - This would ideally fetch from an appointments service */}
         <TabPanel value={tabValue} index={3}>
-          <Paper sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="body1">
-              Appointment history will be displayed here.
-            </Typography>
-            <Button
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={() =>
-                navigate("/appointments/new", {
-                  state: { patientId: patient.id },
-                })
-              }
-            >
-              Schedule New Appointment
-            </Button>
-          </Paper>
+          <Card>
+            <CardContent className="p-4">
+              <Typography variant="h6">Insurance Details</Typography>
+              <Divider className="mb-4" />
+
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Typography
+                    variant="subtitle2"
+                    className="text-gray-600 dark:text-gray-400"
+                  >
+                    Insurance Provider
+                  </Typography>
+                  <Typography variant="body1" className="font-medium">
+                    {patient.insuranceInfo.provider}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={4}>
+                  <Typography
+                    variant="subtitle2"
+                    className="text-gray-600 dark:text-gray-400"
+                  >
+                    Policy Number
+                  </Typography>
+                  <Typography variant="body1" className="font-medium">
+                    {patient.insuranceInfo.policyNumber}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={4}>
+                  <Typography
+                    variant="subtitle2"
+                    className="text-gray-600 dark:text-gray-400"
+                  >
+                    Effective Date
+                  </Typography>
+                  <Typography variant="body1" className="font-medium">
+                    {patient.insuranceInfo.validUntil
+                      ? format(
+                          new Date(patient.insuranceInfo.validUntil),
+                          "MMMM d, yyyy"
+                        )
+                      : "Not specified"}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
         </TabPanel>
 
-        {/* Billing Tab - This would ideally fetch from a billing service */}
+        {/* Billing Tab */}
         <TabPanel value={tabValue} index={4}>
-          <Paper sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="body1">
-              Billing and invoice history will be displayed here.
-            </Typography>
-            <Button
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={() =>
-                navigate("/billing", {
-                  state: { patientId: patient.id },
-                })
-              }
-            >
-              Create New Invoice
-            </Button>
-          </Paper>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex flex-col items-start justify-between gap-3 mb-4 sm:flex-row sm:items-center">
+                <Typography variant="h6">Billing Information</Typography>
+
+                <Button
+                  variant="contained"
+                  onClick={() =>
+                    navigate("/billing", { state: { patientId: patient.id } })
+                  }
+                  className="w-full sm:w-auto"
+                >
+                  Create New Invoice
+                </Button>
+              </div>
+
+              <Divider className="mb-4" />
+
+              <Typography variant="body1" className="py-4 text-center">
+                Billing and invoice history will be displayed here.
+              </Typography>
+            </CardContent>
+          </Card>
         </TabPanel>
       </Box>
-    </Container>
+    </div>
   );
 };
 
