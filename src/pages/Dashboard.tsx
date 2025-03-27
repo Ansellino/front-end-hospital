@@ -30,6 +30,8 @@ import { DashboardStats } from "../services/dashboardService";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
+import PersonIcon from "@mui/icons-material/Person";
+import EventIcon from "@mui/icons-material/Event";
 
 const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -113,103 +115,159 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="dashboard">
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Box className="p-4 dashboard sm:p-6">
+      <Typography
+        variant="h4"
+        component="h1"
+        className="mb-6 text-xl sm:text-2xl md:text-3xl"
+      >
         Dashboard
       </Typography>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
         {/* Stats cards */}
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Total Patients</Typography>
-              <Typography variant="h3">{stats.totalPatients}</Typography>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card className="h-full transition-all duration-200 hover:shadow-md">
+            <CardContent className="flex flex-col items-start justify-between p-4 sm:flex-row sm:items-center sm:p-5">
+              <Box>
+                <Typography
+                  variant="h6"
+                  className="text-gray-700 dark:text-gray-200"
+                >
+                  Total Patients
+                </Typography>
+                <Typography
+                  variant="h3"
+                  className="mt-1 text-2xl font-bold sm:text-3xl"
+                >
+                  {stats.totalPatients}
+                </Typography>
+              </Box>
+              <PersonIcon
+                className="mt-2 text-primary-500 sm:mt-0"
+                fontSize="large"
+              />
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Today's Appointments</Typography>
-              <Typography variant="h3">{stats.todayAppointments}</Typography>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card className="h-full transition-all duration-200 hover:shadow-md">
+            <CardContent className="flex flex-col items-start justify-between p-4 sm:flex-row sm:items-center sm:p-5">
+              <div>
+                <Typography
+                  variant="h6"
+                  className="text-gray-700 dark:text-gray-200"
+                >
+                  Today's Appointments
+                </Typography>
+                <Typography
+                  variant="h3"
+                  className="mt-1 text-2xl font-bold sm:text-3xl"
+                >
+                  {stats.todayAppointments}
+                </Typography>
+              </div>
+              <PersonIcon
+                className="mt-2 text-primary-500 sm:mt-0"
+                fontSize="large"
+              />
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Pending Invoices</Typography>
-              <Typography variant="h3">{stats.pendingInvoices}</Typography>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card className="h-full transition-all duration-200 hover:shadow-md">
+            <CardContent className="flex flex-col items-start justify-between p-4 sm:flex-row sm:items-center sm:p-5">
+              <div>
+                <Typography
+                  variant="h6"
+                  className="text-gray-700 dark:text-gray-200"
+                >
+                  Pending Invoices
+                </Typography>
+                <Typography
+                  variant="h3"
+                  className="mt-1 text-2xl font-bold sm:text-3xl"
+                >
+                  {stats.pendingInvoices}
+                </Typography>
+              </div>
+              <PersonIcon
+                className="mt-2 text-primary-500 sm:mt-0"
+                fontSize="large"
+              />
             </CardContent>
           </Card>
         </Grid>
 
         {/* Monthly Appointments Chart */}
         <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+          <Card className="h-full">
+            <CardContent className="p-4 sm:p-5">
+              <Typography variant="h6" gutterBottom className="mb-3">
                 Monthly Appointments
               </Typography>
-              <Divider sx={{ mb: 2 }} />
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={stats.monthlySummary}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar
-                    dataKey="appointments"
-                    name="Appointments"
-                    fill="#8884d8"
-                  />
-                  <Bar
-                    dataKey="newPatients"
-                    name="New Patients"
-                    fill="#82ca9d"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              <Divider className="mb-4" />
+              <div className="h-[250px] sm:h-[300px] md:h-[350px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={stats.monthlySummary}
+                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar
+                      dataKey="appointments"
+                      name="Appointments"
+                      fill="#8884d8"
+                    />
+                    <Bar
+                      dataKey="newPatients"
+                      name="New Patients"
+                      fill="#82ca9d"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </CardContent>
           </Card>
         </Grid>
 
         {/* Revenue Chart */}
         <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+          <Card className="h-full">
+            <CardContent className="p-4 sm:p-5">
+              <Typography variant="h6" gutterBottom className="mb-3">
                 Monthly Revenue
               </Typography>
-              <Divider sx={{ mb: 2 }} />
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart
-                  data={stats.monthlySummary}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis tickFormatter={(value) => `$${value / 1000}k`} />
-                  <Tooltip
-                    formatter={(value: number) => formatCurrency(value)}
-                  />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="revenue"
-                    name="Revenue"
-                    stroke="#ff7300"
-                    activeDot={{ r: 8 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <Divider className="mb-4" />
+              <div className="h-[250px] sm:h-[300px] md:h-[350px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={stats.monthlySummary}
+                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis tickFormatter={(value) => `$${value / 1000}k`} />
+                    <Tooltip
+                      formatter={(value: number) => formatCurrency(value)}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      name="Revenue"
+                      stroke="#ff7300"
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </CardContent>
           </Card>
         </Grid>
@@ -296,20 +354,39 @@ const Dashboard: React.FC = () => {
         {/* Quick Actions */}
         <Grid item xs={12} md={6}>
           <Card>
-            <CardContent>
-              <Typography variant="h6">Quick Actions</Typography>
-              <Button
-                component={Link}
-                to="/medical-records/add"
-                startIcon={<AddIcon />}
-              >
-                New Medical Record
-              </Button>
+            <CardContent sx={{ pb: 4 }}>
+              <Typography variant="h6" gutterBottom>
+                Quick Actions
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <Box className="flex flex-wrap gap-3">
+                <Button
+                  component={Link}
+                  to="/medical-records/add"
+                  startIcon={<AddIcon />}
+                  variant="contained"
+                  className="flex-grow transition-all duration-200 sm:flex-grow-0"
+                  size="medium"
+                >
+                  New Medical Record
+                </Button>
+
+                <Button
+                  component={Link}
+                  to="/appointments/new"
+                  startIcon={<EventIcon />}
+                  variant="outlined"
+                  className="flex-grow transition-all duration-200 sm:flex-grow-0"
+                  size="medium"
+                >
+                  New Appointment
+                </Button>
+              </Box>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 

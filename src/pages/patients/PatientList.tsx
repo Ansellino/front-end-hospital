@@ -30,6 +30,9 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  Avatar,
+  Card,
+  CardContent,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -38,6 +41,9 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   FilterList as FilterIcon,
+  Phone as PhoneIcon,
+  Email as EmailIcon,
+  Close as CloseIcon,
 } from "@mui/icons-material";
 import { format } from "date-fns";
 import * as patientService from "../../services/patientService";
@@ -80,7 +86,7 @@ const PatientList: React.FC = () => {
         // Extract unique insurance providers for filtering
         const uniqueProviders = Array.from(
           new Set(data.map((p: Patient) => p.insuranceInfo.provider))
-        ) as string[]; // Add explicit type assertion here
+        ) as string[];
         setInsuranceProviders(uniqueProviders);
 
         setError(null);
@@ -95,7 +101,63 @@ const PatientList: React.FC = () => {
     fetchPatients();
   }, []);
 
-  // Handle search and filtering
+  // Calculate age from DOB
+  const calculateAge = (dob: string): number => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  };
+
+  // Handle pagination
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // Handle search
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    setPage(0); // Reset to first page on search
+  };
+
+  // Handle filter changes
+  const handleGenderFilterChange = (event: SelectChangeEvent) => {
+    setGenderFilter(event.target.value);
+  };
+
+  const handleInsuranceFilterChange = (event: SelectChangeEvent) => {
+    setInsuranceFilter(event.target.value);
+  };
+
+  const handleAgeRangeFilterChange = (event: SelectChangeEvent) => {
+    setAgeRangeFilter(event.target.value);
+  };
+
+  // Reset filters
+  const handleResetFilters = () => {
+    setGenderFilter("all");
+    setInsuranceFilter("all");
+    setAgeRangeFilter("all");
+    setSearchQuery("");
+  };
+
+  // Apply filters
   useEffect(() => {
     let filtered = [...patients];
 
@@ -148,36 +210,7 @@ const PatientList: React.FC = () => {
     setPage(0); // Reset to first page when filters change
   }, [searchQuery, patients, genderFilter, insuranceFilter, ageRangeFilter]);
 
-  // Handle filter changes
-  const handleGenderFilterChange = (event: SelectChangeEvent) => {
-    setGenderFilter(event.target.value);
-  };
-
-  const handleInsuranceFilterChange = (event: SelectChangeEvent) => {
-    setInsuranceFilter(event.target.value);
-  };
-
-  const handleAgeRangeFilterChange = (event: SelectChangeEvent) => {
-    setAgeRangeFilter(event.target.value);
-  };
-
-  // Handlers
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-    setPage(0); // Reset to first page on search
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
+  // Event handlers
   const handleViewPatient = (id: string) => {
     navigate(`/patients/${id}`);
   };
@@ -214,43 +247,30 @@ const PatientList: React.FC = () => {
     setPatientToDelete(null);
   };
 
-  // Calculate age from DOB
-  const calculateAge = (dob: string): number => {
-    const birthDate = new Date(dob);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
-  };
+  // Get paginated patients for current page
+  const paginatedPatients = filteredPatients.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   // Render loading state
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "70vh",
-        }}
-      >
+      <Box className="flex justify-center items-center h-[70vh]">
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+    <div className="px-4 sm:px-6 py-6 max-w-[1200px] mx-auto">
+      {/* Header with title and add button */}
+      <div className="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">
+        <Typography
+          variant="h4"
+          component="h1"
+          className="text-xl font-medium sm:text-2xl md:text-3xl"
+        >
           Patients
         </Typography>
 
@@ -260,27 +280,22 @@ const PatientList: React.FC = () => {
             color="primary"
             startIcon={<AddIcon />}
             onClick={() => navigate("/patients/add")}
+            className="w-full sm:w-auto"
           >
             Add New Patient
           </Button>
         )}
-      </Box>
+      </div>
 
       {error && (
-        <Box sx={{ mb: 2 }}>
+        <Box className="mb-4">
           <Typography color="error">{error}</Typography>
         </Box>
       )}
 
-      <Paper sx={{ mb: 3, p: 2 }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
-          }}
-        >
+      {/* Search and filters */}
+      <Paper className="p-4 mb-4">
+        <div className="flex flex-col gap-4 mb-4 md:flex-row md:items-center md:justify-between">
           <TextField
             variant="outlined"
             size="small"
@@ -294,22 +309,37 @@ const PatientList: React.FC = () => {
                 </InputAdornment>
               ),
             }}
-            sx={{ width: { xs: "100%", sm: "50%", md: "30%" } }}
+            className="w-full md:w-[350px]"
           />
 
-          <Button
-            startIcon={<FilterIcon />}
-            onClick={() => setShowFilters(!showFilters)}
-            sx={{ display: { xs: "none", md: "flex" } }}
-          >
-            Filters
-          </Button>
-        </Box>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              startIcon={<FilterIcon />}
+              onClick={() => setShowFilters(!showFilters)}
+              variant="outlined"
+              size="small"
+              className="flex-grow sm:flex-grow-0"
+            >
+              {showFilters ? "Hide Filters" : "Show Filters"}
+            </Button>
+
+            {showFilters && (
+              <Button
+                startIcon={<CloseIcon />}
+                onClick={handleResetFilters}
+                size="small"
+                className="flex-grow sm:flex-grow-0"
+              >
+                Reset Filters
+              </Button>
+            )}
+          </div>
+        </div>
 
         {/* Filter options */}
         {showFilters && (
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            <Grid item xs={12} sm={4}>
+          <Grid container spacing={2} className="mt-2">
+            <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth size="small">
                 <InputLabel id="gender-filter-label">Gender</InputLabel>
                 <Select
@@ -327,7 +357,7 @@ const PatientList: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth size="small">
                 <InputLabel id="insurance-filter-label">
                   Insurance Provider
@@ -349,7 +379,7 @@ const PatientList: React.FC = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth size="small">
                 <InputLabel id="age-filter-label">Age Range</InputLabel>
                 <Select
@@ -370,10 +400,13 @@ const PatientList: React.FC = () => {
             </Grid>
           </Grid>
         )}
+      </Paper>
 
-        <TableContainer>
+      {/* Desktop view - Table */}
+      <div className="hidden md:block">
+        <TableContainer component={Paper}>
           <Table>
-            <TableHead>
+            <TableHead className="bg-gray-50 dark:bg-gray-800">
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell>Age</TableCell>
@@ -385,20 +418,36 @@ const PatientList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredPatients.length === 0 ? (
+              {paginatedPatients.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
                     No patients found
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredPatients
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((patient) => (
-                    <TableRow key={patient.id} hover>
-                      <TableCell>
-                        <Box sx={{ display: "flex", flexDirection: "column" }}>
-                          <Typography variant="body1">
+                paginatedPatients.map((patient) => (
+                  <TableRow
+                    key={patient.id}
+                    hover
+                    className="transition-colors cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                    onClick={() => handleViewPatient(patient.id)}
+                  >
+                    <TableCell>
+                      <div className="flex items-center">
+                        <Avatar
+                          className="w-8 h-8 mr-2"
+                          sx={{
+                            bgcolor:
+                              patient.gender === "male"
+                                ? "primary.main"
+                                : "secondary.main",
+                          }}
+                        >
+                          {patient.firstName[0]}
+                          {patient.lastName[0]}
+                        </Avatar>
+                        <div>
+                          <Typography variant="body1" className="font-medium">
                             {patient.lastName}, {patient.firstName}
                           </Typography>
                           <Typography variant="caption" color="textSecondary">
@@ -408,92 +457,233 @@ const PatientList: React.FC = () => {
                               "MMM d, yyyy"
                             )}
                           </Typography>
-                        </Box>
-                      </TableCell>
-                      <TableCell>{calculateAge(patient.dateOfBirth)}</TableCell>
-                      <TableCell>
-                        <Chip
-                          size="small"
-                          label={
-                            patient.gender.charAt(0).toUpperCase() +
-                            patient.gender.slice(1)
-                          }
-                          color={
-                            patient.gender === "male"
-                              ? "primary"
-                              : patient.gender === "female"
-                              ? "secondary"
-                              : "default"
-                          }
-                          variant="outlined"
-                        />
-                      </TableCell>
-                      <TableCell>{patient.contactNumber}</TableCell>
-                      <TableCell>{patient.email}</TableCell>
-                      <TableCell>
-                        <Tooltip
-                          title={`Policy: ${patient.insuranceInfo.policyNumber}`}
-                        >
-                          <Typography variant="body2">
-                            {patient.insuranceInfo.provider}
-                          </Typography>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Box sx={{ display: "flex", justifyContent: "center" }}>
-                          <Tooltip title="View Details">
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{calculateAge(patient.dateOfBirth)}</TableCell>
+                    <TableCell>
+                      <Chip
+                        size="small"
+                        label={
+                          patient.gender.charAt(0).toUpperCase() +
+                          patient.gender.slice(1)
+                        }
+                        color={
+                          patient.gender === "male"
+                            ? "primary"
+                            : patient.gender === "female"
+                            ? "secondary"
+                            : "default"
+                        }
+                        variant="outlined"
+                      />
+                    </TableCell>
+                    <TableCell>{patient.contactNumber}</TableCell>
+                    <TableCell className="truncate max-w-[150px]">
+                      {patient.email}
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip
+                        title={`Policy: ${patient.insuranceInfo.policyNumber}`}
+                      >
+                        <Typography variant="body2">
+                          {patient.insuranceInfo.provider}
+                        </Typography>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <div
+                        className="flex justify-center"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {hasPermission("edit:patients") && (
+                          <Tooltip title="Edit Patient">
                             <IconButton
                               size="small"
-                              onClick={() => handleViewPatient(patient.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditPatient(patient.id);
+                              }}
                             >
-                              <ViewIcon />
+                              <EditIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
-
-                          {hasPermission("edit:patients") && (
-                            <Tooltip title="Edit Patient">
-                              <IconButton
-                                size="small"
-                                onClick={() => handleEditPatient(patient.id)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
-                          )}
-
-                          {hasPermission("delete:patients") && (
-                            <Tooltip title="Delete Patient">
-                              <IconButton
-                                size="small"
-                                color="error"
-                                onClick={() => handleDeleteClick(patient.id)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          )}
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                        )}
+                        {hasPermission("delete:patients") && (
+                          <Tooltip title="Delete Patient">
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClick(patient.id);
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
             </TableBody>
           </Table>
         </TableContainer>
+      </div>
 
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={filteredPatients.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
+      {/* Mobile view - Cards */}
+      <div className="md:hidden">
+        {paginatedPatients.length === 0 ? (
+          <Paper className="p-4 text-center">
+            <Typography color="textSecondary">No patients found</Typography>
+          </Paper>
+        ) : (
+          <div className="space-y-3">
+            {paginatedPatients.map((patient) => (
+              <Card
+                key={patient.id}
+                className="transition-shadow hover:shadow-md"
+                onClick={() => handleViewPatient(patient.id)}
+              >
+                <CardContent className="p-3 pb-3 last:pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Avatar
+                        className="w-10 h-10 mr-3"
+                        sx={{
+                          bgcolor:
+                            patient.gender === "male"
+                              ? "primary.main"
+                              : "secondary.main",
+                        }}
+                      >
+                        {patient.firstName[0]}
+                        {patient.lastName[0]}
+                      </Avatar>
+                      <div>
+                        <Typography variant="subtitle1" className="font-medium">
+                          {patient.lastName}, {patient.firstName}
+                        </Typography>
+                        <div className="flex items-center mt-1">
+                          <Chip
+                            size="small"
+                            label={
+                              patient.gender.charAt(0).toUpperCase() +
+                              patient.gender.slice(1)
+                            }
+                            color={
+                              patient.gender === "male"
+                                ? "primary"
+                                : patient.gender === "female"
+                                ? "secondary"
+                                : "default"
+                            }
+                            variant="outlined"
+                            sx={{ height: 20 }}
+                          />
+                          <Typography variant="caption" className="ml-2">
+                            {calculateAge(patient.dateOfBirth)} years
+                          </Typography>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex" onClick={(e) => e.stopPropagation()}>
+                      {hasPermission("edit:patients") && (
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditPatient(patient.id);
+                          }}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                      {hasPermission("delete:patients") && (
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClick(patient.id);
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-1 mt-3">
+                    <div className="flex items-center">
+                      <PhoneIcon
+                        fontSize="small"
+                        className="mr-2 text-gray-500"
+                      />
+                      <Typography variant="body2">
+                        {patient.contactNumber}
+                      </Typography>
+                    </div>
+                    <div className="flex items-center">
+                      <EmailIcon
+                        fontSize="small"
+                        className="mr-2 text-gray-500"
+                      />
+                      <Typography variant="body2" className="truncate">
+                        {patient.email}
+                      </Typography>
+                    </div>
+                    <div className="flex items-center mt-1">
+                      <Typography
+                        variant="caption"
+                        className="mr-2 text-gray-500"
+                      >
+                        Insurance:
+                      </Typography>
+                      <Typography variant="body2">
+                        {patient.insuranceInfo.provider}
+                      </Typography>
+                    </div>
+                    <div className="flex items-center">
+                      <Typography
+                        variant="caption"
+                        className="mr-2 text-gray-500"
+                      >
+                        DOB:
+                      </Typography>
+                      <Typography variant="body2">
+                        {format(new Date(patient.dateOfBirth), "MMM d, yyyy")}
+                      </Typography>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Pagination */}
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={filteredPatients.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        className="mt-4 overflow-x-auto"
+      />
 
       {/* Delete confirmation dialog */}
-      <Dialog open={deleteDialogOpen} onClose={cancelDelete}>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={cancelDelete}
+        classes={{ paper: "mx-4" }}
+      >
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -501,14 +691,14 @@ const PatientList: React.FC = () => {
             cannot be undone.
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
+        <DialogActions className="p-4">
           <Button onClick={cancelDelete}>Cancel</Button>
           <Button onClick={confirmDelete} color="error" autoFocus>
             Delete
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </div>
   );
 };
 
