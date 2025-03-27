@@ -3,6 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { format, formatDistanceToNow } from "date-fns";
 import NotificationService from "../services/notificationService";
+import {
+  Notification,
+  NotificationType,
+  NOTIFICATION_ICONS,
+  NOTIFICATION_COLORS,
+} from "../interfaces/notification";
 
 // Import icons
 import {
@@ -20,16 +26,8 @@ import {
   Person as PersonIcon,
 } from "@mui/icons-material";
 
-// Define a simplified Notification interface for Header usage
-interface HeaderNotification {
-  id: string;
-  title: string;
-  message: string;
-  type: "appointment" | "system" | "patient" | "billing" | "staff";
-  isRead: boolean;
-  createdAt: string;
-  actionUrl?: string;
-}
+// Use the imported Notification interface instead of duplicating
+type HeaderNotification = Notification;
 
 interface HeaderProps {
   onMenuClick: () => void;

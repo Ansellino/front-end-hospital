@@ -100,7 +100,11 @@ const Login = () => {
             <MedicalServicesIcon fontSize="large" />
           </Avatar>
 
-          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
+          <Typography
+            component="h1"
+            variant="h5"
+            sx={{ mb: 3, textAlign: "center", width: "100%" }}
+          >
             Healthcare Management System
           </Typography>
 

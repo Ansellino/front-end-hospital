@@ -1,16 +1,11 @@
 import api from "./api";
 import { formatDistanceToNow } from "date-fns";
-
-export interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: "appointment" | "system" | "patient" | "billing" | "staff";
-  isRead: boolean;
-  createdAt: string;
-  relatedId?: string;
-  actionUrl?: string;
-}
+import {
+  Notification,
+  NotificationType,
+  NOTIFICATION_LABELS,
+  NOTIFICATION_COLORS,
+} from "../interfaces/notification";
 
 /**
  * Service for handling notification-related operations
@@ -99,8 +94,13 @@ const NotificationService = {
  * Modified to have exactly 5 unread notifications
  */
 export const generateMockNotifications = (count: number): Notification[] => {
-  const types: ("appointment" | "system" | "patient" | "billing" | "staff")[] =
-    ["appointment", "system", "patient", "billing", "staff"];
+  const types: NotificationType[] = [
+    "appointment",
+    "system",
+    "patient",
+    "billing",
+    "staff",
+  ];
 
   const mockData: Notification[] = [];
 

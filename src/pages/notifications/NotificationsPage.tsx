@@ -39,19 +39,15 @@ import {
 import { format, formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import NotificationService from "../../services/notificationService";
+import {
+  Notification,
+  NotificationType,
+  NotificationFilter,
+  NOTIFICATION_COLORS,
+  NOTIFICATION_LABELS,
+  NOTIFICATION_ICONS,
+} from "../../interfaces/notification";
 import { usePagination } from "../../utils/pagination";
-
-// Define interfaces
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: "appointment" | "system" | "patient" | "billing" | "staff";
-  isRead: boolean;
-  createdAt: string;
-  relatedId?: string;
-  actionUrl?: string;
-}
 
 const NotificationsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -196,38 +192,12 @@ const NotificationsPage: React.FC = () => {
   };
 
   // Get notification color based on type
-  const getNotificationColor = (type: string) => {
-    switch (type) {
-      case "appointment":
-        return "#3f51b5"; // Blue
-      case "system":
-        return "#ff9800"; // Orange
-      case "patient":
-        return "#4caf50"; // Green
-      case "billing":
-        return "#f44336"; // Red
-      case "staff":
-        return "#9c27b0"; // Purple
-      default:
-        return "#757575"; // Gray
-    }
+  const getNotificationColor = (type: NotificationType): string => {
+    return NOTIFICATION_COLORS[type];
   };
 
-  const getNotificationTypeLabel = (type: string) => {
-    switch (type) {
-      case "appointment":
-        return "Appointment";
-      case "system":
-        return "System";
-      case "patient":
-        return "Patient";
-      case "billing":
-        return "Billing";
-      case "staff":
-        return "Staff";
-      default:
-        return type.charAt(0).toUpperCase() + type.slice(1);
-    }
+  const getNotificationTypeLabel = (type: NotificationType): string => {
+    return NOTIFICATION_LABELS[type];
   };
 
   if (loading) {
